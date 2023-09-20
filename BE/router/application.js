@@ -9,5 +9,6 @@ router.post("/forgotpassword", application.forgotPassword);
 router.post("/resetpassword", application.resetPassword);
 router.post("/add/project", auth, application.postProject);
 router.get("/all/project", application.getAllProjects);
+router.post("/send/otp", application.sendOtp);
 
 module.exports = router;

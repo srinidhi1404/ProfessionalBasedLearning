@@ -46,35 +46,81 @@ const login = async (req, res) => {
 };
 const signup = async (req, res) => {
   try {
-    const { firstName, secondName, email, password } = req.body;
+    const { firstName, secondName, email, password, otp } = req.body;
 
     // Check if any required field is missing
-    if (!firstName || !secondName || !email || !password) {
-      res.json({ message: "Enter all data", status: false });
+    if (!firstName || !secondName || !email || !password || !otp) {
+      res.json({ message: "Enter all data including OTP", status: false });
+      return;
+    }
+
+    // Check if the provided OTP is correct
+    const otpQuery =
+      "SELECT * FROM user WHERE email = ? AND resetToken = ? AND resetTokenExpiration > NOW()";
+    const [otpRows] = await pool.query(otpQuery, [email, otp]);
+
+    if (otpRows.length === 0) {
+      res.json({
+        message: "Invalid OTP or OTP has expired",
+        status: false,
+      });
+      return;
+    }
+
+    // update the new user
+    const updateQuery =
+      "UPDATE user SET firstName = ?, secondName = ?, password = ? WHERE email = ?";
+    await pool.query(updateQuery, [firstName, secondName, password, email]);
+    res
+      .status(201)
+      .json({ message: "User signed up successfully", status: true });
+  } catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res
+      .status(500)
+      .json({ message: "An error occurred while signing up", status: false });
+  }
+};
+
+const sendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      res.json({ message: "Please provide your email", status: false });
       return;
     }
 
     // Check if the email already exists in the database
     const checkEmailQuery = "SELECT * FROM user WHERE email = ?";
-    const existingUser = await pool.query(checkEmailQuery, [email]);
+    const [existingUser] = await pool.query(checkEmailQuery, [email]);
 
     if (existingUser.length > 0) {
       res.json({ message: "User already exists", status: false });
       return;
     }
 
-    // Insert the new user
-    const insertQuery =
-      "INSERT INTO user (firstName, secondName, email, password) VALUES (?, ?, ?, ?)";
-    await pool.query(insertQuery, [firstName, secondName, email, password]);
+    const resetToken = Math.floor(Math.random() * 900000) + 100000;
 
-    res
-      .status(201)
-      .json({ message: "User signed up successfully", status: true });
+    // Insert a new record with email, resetToken, and expiry in the database
+    const insertResetTokenQuery =
+      "INSERT INTO user (email, resetToken, resetTokenExpiration) VALUES (?, ?, NOW() + INTERVAL 1 HOUR)";
+    await pool.query(insertResetTokenQuery, [email, resetToken]);
+
+    // Send the OTP (assuming you have a function named sendInitialOtp)
+    sendInitialOtp(email, resetToken);
+
+    res.json({
+      message: "OTP sent to your email",
+      status: true,
+      resetToken: resetToken,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "An error occurred while signing up", status: false });
+    console.error(error); // Log the error for debugging purposes
+    res.status(500).json({
+      message: "An error occurred while processing your request",
+      status: false,
+    });
   }
 };
 
@@ -145,6 +191,31 @@ async function sendResetEmail(email, token) {
   });
 }
 
+async function sendInitialOtp(email, token) {
+  const body = {
+    from: "dgpadmin@naveenrio.me",
+    to: email,
+    subject: `OTP verification`,
+    html: `<div>OTP verification for your email ${token}. This will expire in an hour</div>`,
+  };
+
+  const transport = nodemailer.createTransport({
+    host: "live.smtp.mailtrap.io", //sandbox.smtp.mailtrap.io",
+    port: 587,
+    auth: {
+      user: "api", //86207576053cfe",
+      pass: "82bc5abcc46929231dcc93949027783b", //df87b6e5a6cb1d"
+    },
+  });
+
+  await transport.sendMail(body, (err) => {
+    if (err) {
+      return console.log("error occurs", err);
+    } else {
+      return console.log("email sent");
+    }
+  });
+}
 const resetPassword = async (req, res) => {
   try {
     const { email, resetToken, newPassword } = req.body;
@@ -265,4 +336,5 @@ module.exports = {
   resetPassword,
   postProject,
   getAllProjects,
+  sendOtp,
 };
