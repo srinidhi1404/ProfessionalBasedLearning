@@ -1,0 +1,65 @@
+.LogoutDiv1{
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    
+    
+
+}
+
+.LogoutDiv2{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    display: flex; 
+    flex-direction: row;
+    /* border: 2px solid black; */
+    height: auto;
+    gap: 25px;
+}
+
+.LogoutDiv3{
+    height: 100px;
+    color:  #006747;
+    font-weight: bold;
+    font-size: 25px;
+    /* border: solid; */
+    height: 100px;
+    align-items: center;
+    justify-content: center;
+    width: 408px;
+    display: flex;
+}
+.LogoutDiv4{
+    color:  #006747;
+    font-weight: bold;
+    font-size: 25px;
+    /* border: solid !important; */
+    width: 210px !important;
+    display: flex;
+    cursor: pointer;
+    height: 100px;
+    text-align: center;
+    align-items: center;
+}
+.LogoutDiv4:hover{
+    background-color: #006747 !important;
+    color: white;
+}
+.LogoutDiv3:hover{
+    background-color: #006747 !important;
+    color: white;
+}
+.LogoutDiv2 img:hover{
+    background-color: #006747 !important;
+    color: white;
+}
+.logoutNavImg{
+    height: 100px;
+}
