@@ -1,11 +1,13 @@
 
 export const fetchApi =async (endpoint , body, method ) => {
+ let auth = localStorage.getItem('token')
  
     let baseUrl = 'http://localhost:3000';
     let data ={
         method: method, // or 'PUT'
         headers: {
-          "Content-Type": "application/json",
+          "content-type": "application/json",
+          'token': auth ? auth : null
         },
         body:  method== "GET" ? null : JSON.stringify(body),
       }

@@ -1,0 +1,58 @@
+.div2{
+    /* width: 100%; */
+    /* box-shadow: 5%;s */
+    /* border: solid red;s */
+    /* height:20%; */
+    /* box-shadow: inset; */
+
+}
+.div3{
+    width: 20%;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.div6:hover{
+    background-color:  black;
+    transition: background-color 0.3s ease-in-out;
+
+}
+.div6{
+    background-color:  #006747;
+    color: aliceblue;
+    width:100% ;
+    transition: background-color 0.3s ease-in-out;
+    background-color:  black;
+}
+
+
+.navbarCss{
+    box-shadow: 0 2px 4px rgba(0.2, 0, 0, 0.4);
+}
+.dashboardBody{
+padding: 60px 80px;
+}
+
+.my-card{
+   width: 350px;
+   padding: 15px;
+   border: 1px solid rgb(204, 196, 196);
+   border-radius: 6px;
+   margin-top: 2%;
+}
+.div6{
+    width: 247px;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 5px;
+    transition: ease-in-out;
+}
+.mycard-con{
+    display: flex;
+   
+    flex-wrap: wrap;
+    text-align: left;
+    column-gap: 2%;
+
+
+}
