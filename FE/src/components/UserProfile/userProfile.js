@@ -1,15 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarLogout from "../NavLogout/navLogout";
 import "./userProfile.css";
+import axios from "axios";
+
 import Table from "../Table/table";
 import Footer from "../Footer/footer";
 
 const UserProfile = () => {
   const navigate = useNavigate();
-  const data = [
-    { id: 1, Project_Title: "Project 1", Description: "Description of Project 1", Date_Posted:"2023-05-01"},
-  ];
+  const userApi = "http://localhost:3000/student/student-details";
+  const guestApi = "http://localhost:3000/api/user-details";
+  const token = localStorage.getItem("token");
+  const [GuestUserDetail, SetGuestUserDetail] = useState("");
+  const [UserDetail, SetUserDetail] = useState("");
+
+  const userType = localStorage.getItem("userType");
+  useEffect(() => {
+    if (userType === "guestUser") {
+      axios
+        .get(guestApi, {
+          headers: {
+            token: token,
+          },
+        })
+        .then((response) => {
+          SetGuestUserDetail(response.data);
+        })
+        .catch((error) => {});
+    } else if (userType === "student") {
+      axios
+        .get(userApi, {
+          headers: {
+            token: token,
+          },
+        })
+        .then((response) => {
+          SetUserDetail(response.data);
+        })
+        .catch((error) => {});
+    }
+  }, []);
 
   return (
     <>
@@ -23,20 +54,57 @@ const UserProfile = () => {
             <img src="https://projectbasedlearningexplorer.onrender.com/images/logo.png  " />
           </div>
           <div className="profileDiv6">
-            <h2 className="AlignItems">User Name</h2>
-            <p className="AlignItems">Email:</p>
-            <p className="AlignItems">Projects Posted:</p>
-            <p className="AlignItems">Intro:</p>
-            <p className="AlignItems">Contact Details: 123-456-7890</p>
+            {userType == "student" ? (
+              <>
+                <h2 className="AlignItems">
+                  {UserDetail.data?.user.firstName}{" "}
+                  {UserDetail.data?.user.secondName}
+                </h2>
+                <p className="AlignItems">Education :</p>
+                <p className="AlignItems">
+                  Email: {UserDetail.data?.user.email}
+                </p>
+                <p className="AlignItems">
+                  Projects Posted: {UserDetail.data?.projects?.length}
+                </p>
+                <p className="AlignItems">Intro:</p>
+                <p className="AlignItems">Contact Details: </p>
+              </>
+            ) : userType == "guestUser" ? (
+              <>
+                {" "}
+                <h2 className="AlignItems">
+                  {GuestUserDetail.data?.user.firstName}{" "}
+                  {GuestUserDetail.data?.user.secondName}
+                </h2>
+                <p className="AlignItems">Education :</p>
+                <p className="AlignItems">
+                  Email: {GuestUserDetail.data?.user.email}
+                </p>
+                <p className="AlignItems">
+                  Projects Posted: {GuestUserDetail.data?.projects?.length}
+                </p>
+                <p className="AlignItems">Intro:</p>
+                <p className="AlignItems">Contact Details: </p>
+              </>
+            ) : (
+              ""
+            )}
           </div>
           <div className="profileDiv7">
             <h2>Project Posted</h2>
             <div className="profileDiv8">
-              <Table data={data} />
+              <Table
+                data={
+                  userType == "student"
+                    ? UserDetail.data?.projects
+                    : GuestUserDetail.data?.projects
+                }
+              />
             </div>
           </div>
         </div>
-        <Footer/>
+        <Footer />
       </div>
     </>
   );

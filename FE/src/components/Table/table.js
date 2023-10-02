@@ -1,24 +1,27 @@
-import React from 'react';
-import './table.css'
+import React from "react";
+import moment from "moment";
+import "./table.css";
 
 const Table = ({ data }) => {
   return (
-    <table className='tableBody'>
+    <table className="tableBody">
       <thead>
         <tr>
-        <th>#</th>
+          <th>#</th>
           <th>Project Title</th>
           <th>Description</th>
-          <th>Date Posted</th>
+          <th>Start Date</th>
+          <th>End Date</th>
         </tr>
       </thead>
       <tbody>
-        {data.map((item) => (
-          <tr key={item.id}>
-            <td>{item.id}</td>
-            <td>{item.Project_Title}</td>
-            <td>{item.Description}</td>
-            <td>{item.Date_Posted}</td>
+        {data?.map((item, index) => (
+          <tr key={index}>
+            <td>{item.projectID}</td>
+            <td>{item.projectTitle}</td>
+            <td>{item.projectDescription}</td>
+            <td>{moment(item.startDate).format("DD-MM-YYYY")}</td>
+            <td>{moment(item.endDate).format("DD-MM-YYYY")}</td>
           </tr>
         ))}
       </tbody>

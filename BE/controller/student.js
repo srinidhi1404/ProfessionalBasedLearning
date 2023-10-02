@@ -14,7 +14,7 @@ const login = async (req, res) => {
       const [results] = await pool.execute(sqlQuery, [email]);
 
       if (results.length === 0) {
-        res.json({ msg: "student does not exist" });
+        res.json({ message: "student does not exist", status: false });
       } else {
         const userData = results[0];
 
@@ -155,13 +155,62 @@ const postProject = async (req, res) => {
 
 const getAllProjects = async (req, res) => {
   try {
-    const selectQuery = "SELECT * FROM studentProject";
-    const [projects] = await pool.query(selectQuery);
+    const email = req.data.id;
+    const selectQuery = `
+    SELECT * FROM studentProject
+    WHERE (projectType = 1 OR (projectType = 0 AND email = ?))
+      AND (endDate IS NULL OR endDate >= CURDATE())
+  `;
+    const [projects] = await pool.query(selectQuery, [email]);
+    const studentQuery = `
+    SELECT * FROM projects
+    WHERE projectType = 1
+  `;
+    const [studentProjects] = await pool.query(studentQuery, [email]);
 
-    res.status(200).json({ projects, status: true });
+    let data = projects.concat(studentProjects);
+    console.log(data.length);
+    res.status(200).json({ data: data, status: true });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       message: "An error occurred while fetching projects",
+      status: false,
+    });
+  }
+};
+
+const getStudentDetails = async (req, res) => {
+  try {
+    const email = req.data.id;
+
+    const userQuery =
+      "SELECT id,firstName,secondName,email FROM student WHERE email = ?";
+    const [userResult] = await pool.query(userQuery, [email]);
+
+    if (userResult.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Student not found", status: false });
+    }
+
+    const user = userResult[0];
+
+    const projectsQuery = "SELECT * FROM studentProject WHERE email = ?";
+    const [projectsResult] = await pool.query(projectsQuery, [email]);
+
+    const response = {
+      user,
+      projects: projectsResult,
+    };
+
+    res
+      .status(200)
+      .json({ data: response, message: "student details found", status: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while fetching student details and projects",
       status: false,
     });
   }
@@ -173,4 +222,5 @@ module.exports = {
   getAllStudents,
   postProject,
   getAllProjects,
+  getStudentDetails,
 };

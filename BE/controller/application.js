@@ -95,26 +95,46 @@ const sendOtp = async (req, res) => {
     const checkEmailQuery = "SELECT * FROM user WHERE email = ?";
     const [existingUser] = await pool.query(checkEmailQuery, [email]);
 
-    if (existingUser.length > 0) {
-      res.json({ message: "User already exists", status: false });
-      return;
+    if (existingUser.length === 0) {
+      // If no record exists, insert a new one
+      const resetToken = Math.floor(Math.random() * 900000) + 100000;
+
+      // Insert a new record with email, resetToken, and expiry in the database
+      const insertResetTokenQuery =
+        "INSERT INTO user (email, resetToken, resetTokenExpiration) VALUES (?, ?, NOW() + INTERVAL 1 HOUR)";
+      await pool.query(insertResetTokenQuery, [email, resetToken]);
+
+      // Send the OTP (assuming you have a function named sendInitialOtp)
+      sendInitialOtp(email, resetToken);
+
+      res.json({
+        message: "OTP sent to your email",
+        status: true,
+        resetToken: resetToken,
+      });
+    } else if (!existingUser[0].firstName) {
+      // If a record exists and has a firstName, update the record
+      const resetToken = Math.floor(Math.random() * 900000) + 100000;
+
+      // Update the existing record with a new resetToken and resetTokenExpiration
+      const updateResetTokenQuery =
+        "UPDATE user SET resetToken = ?, resetTokenExpiration = NOW() + INTERVAL 1 HOUR WHERE email = ?";
+      await pool.query(updateResetTokenQuery, [resetToken, email]);
+
+      // Send the OTP (assuming you have a function named sendInitialOtp)
+      sendInitialOtp(email, resetToken);
+
+      res.json({
+        message: "OTP sent to your email and record updated",
+        status: true,
+        resetToken: resetToken,
+      });
+    } else {
+      res.json({
+        message: "User already exists",
+        status: false,
+      });
     }
-
-    const resetToken = Math.floor(Math.random() * 900000) + 100000;
-
-    // Insert a new record with email, resetToken, and expiry in the database
-    const insertResetTokenQuery =
-      "INSERT INTO user (email, resetToken, resetTokenExpiration) VALUES (?, ?, NOW() + INTERVAL 1 HOUR)";
-    await pool.query(insertResetTokenQuery, [email, resetToken]);
-
-    // Send the OTP (assuming you have a function named sendInitialOtp)
-    sendInitialOtp(email, resetToken);
-
-    res.json({
-      message: "OTP sent to your email",
-      status: true,
-      resetToken: resetToken,
-    });
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
     res.status(500).json({
@@ -146,7 +166,7 @@ const forgotPassword = async (req, res) => {
 
     const updateTokenQuery =
       "UPDATE user SET resetToken = ?, resetTokenExpiration = ? WHERE email = ?";
-    const tokenExpiration = new Date(Date.now() + 3600000); // Token expires in 1 hour
+    const tokenExpiration = new Date(Date.now() + 7200000); // Token expires in 1 hour
     await pool.query(updateTokenQuery, [resetToken, tokenExpiration, email]);
 
     sendResetEmail(email, resetToken);
@@ -225,13 +245,24 @@ const resetPassword = async (req, res) => {
       return;
     }
 
-    // Check if the user with the provided email and valid reset token exists in the database
-    const userQuery =
-      "SELECT * FROM user WHERE email = ? AND resetToken = ? AND resetTokenExpiration > NOW()";
+    // Check if the user with the provided email and resetToken exists in the database
+    const userQuery = "SELECT * FROM user WHERE email = ? AND resetToken = ?";
     const [userRows] = await pool.query(userQuery, [email, resetToken]);
+
     if (userRows.length === 0) {
       res.json({
-        message: "Invalid reset token or expired token",
+        message: "Invalid reset token",
+        status: false,
+      });
+      return;
+    }
+
+    const user = userRows[0];
+
+    // Check if the resetToken has expired
+    if (user.resetTokenExpiration < new Date()) {
+      res.json({
+        message: "Expired reset token",
         status: false,
       });
       return;
@@ -254,6 +285,7 @@ const resetPassword = async (req, res) => {
     });
   }
 };
+
 const postProject = async (req, res) => {
   try {
     const {
@@ -317,13 +349,59 @@ const postProject = async (req, res) => {
 
 const getAllProjects = async (req, res) => {
   try {
-    const selectQuery = "SELECT * FROM projects";
-    const [projects] = await pool.query(selectQuery);
+    const email = req.data.id;
+    const selectQuery = `
+    SELECT * FROM projects
+    WHERE (projectType = 1 OR (projectType = 0 AND email = ?))
+      AND (endDate IS NULL OR endDate >= CURDATE())
+  `;
+    const [projects] = await pool.query(selectQuery, [email]);
+    const studentQuery = `
+    SELECT * FROM studentProject
+    WHERE projectType = 1
+  `;
+    const [studentProjects] = await pool.query(studentQuery, [email]);
 
-    res.status(200).json({ projects, status: true });
+    let data = projects.concat(studentProjects);
+    console.log(data.length);
+    res.status(200).json({ data: data, status: true });
   } catch (error) {
     res.status(500).json({
       message: "An error occurred while fetching projects",
+      status: false,
+    });
+  }
+};
+
+const getUserDetails = async (req, res) => {
+  try {
+    const email = req.data.id;
+
+    const userQuery =
+      "SELECT id,firstName,secondName,email FROM user WHERE email = ?";
+    const [userResult] = await pool.query(userQuery, [email]);
+
+    if (userResult.length === 0) {
+      return res.status(404).json({ message: "User not found", status: false });
+    }
+
+    const user = userResult[0];
+
+    const projectsQuery = "SELECT * FROM projects WHERE email = ?";
+    const [projectsResult] = await pool.query(projectsQuery, [email]);
+
+    const response = {
+      user,
+      projects: projectsResult,
+    };
+
+    res
+      .status(200)
+      .json({ data: response, message: "User details found", status: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while fetching user details and projects",
       status: false,
     });
   }
@@ -337,4 +415,5 @@ module.exports = {
   postProject,
   getAllProjects,
   sendOtp,
+  getUserDetails,
 };
