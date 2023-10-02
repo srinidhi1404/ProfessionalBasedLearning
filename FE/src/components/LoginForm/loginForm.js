@@ -87,6 +87,20 @@ const LoginForm = () => {
         }
         console.log("response data", response.status);
       }
+      else if (userType === "admin") {
+        let response = await fetchApi("/admin/login", formData, "POST");
+
+        if (response.status == true) {
+          notify(response.message);
+          // localStorage.setItem('auth','response.')
+          // Setting an item in local storage
+          localStorage.setItem("token", response.token);
+          console.log(">>>>>>>>>token", response.token);
+        } else {
+          notify1("Please Enter Correct Credential");
+        }
+        console.log("response data", response.status);
+      }
     }
   };
 

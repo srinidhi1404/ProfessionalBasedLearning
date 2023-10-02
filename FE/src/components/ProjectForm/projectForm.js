@@ -10,6 +10,7 @@ import { fetchApi } from "../../Utils/Request";
 import * as XLSX from "xlsx";
 import Footer from "../Footer/footer";
 import NavbarLogout from "../NavLogout/navLogout";
+import axios from "axios";
 
 const formDetails = {
   projectTitle: "",
@@ -23,9 +24,10 @@ const formDetails = {
 };
 const ProjectForm = () => {
   const [formData, setFormData] = useState({ ...formDetails });
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(false);
   const [items, setItems] = useState([]);
-  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfFile, setPdfFile] = useState("");
 
   const options = [
     { value: "", label: "Select" },
@@ -33,12 +35,8 @@ const ProjectForm = () => {
     { value: false, label: "Private" },
   ];
 
-  useEffect(() => {}, [pdfFile]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log("event", e.target);
-
     setFormData((prevData) => ({ ...prevData, [name]: value }));
     setFormData((prevData) => ({
       ...prevData,
@@ -46,7 +44,21 @@ const ProjectForm = () => {
     }));
   };
 
-  console.log("formdata", formData);
+  const uploadImage = async (e) => {
+    setLoading(true);
+    let formData = new FormData();
+    formData.append("image", e.target.files[0]);
+    let u = await axios.post(
+      `http://localhost:3000/api/upload/image`,
+      formData
+    );
+    if (u.data.status) {
+      setPdfFile(u.data.secureUrl);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,45 +76,24 @@ const ProjectForm = () => {
     }
 
     let userType = localStorage.getItem("userType");
-    // console.log("userType",userType);
-    if (errors != true) {
-      if (userType == "guestUser") {
-        let payload = { ...formData };
-        payload.document = pdfFile;
-
-        let response = await fetchApi("/api/add/project", payload, "POST");
-        if (response.status === true) {
-          notify(response.message);
-        } else {
-          notify1(response.message);
-        }
-      } else if (userType == "student") {
-        let response = await fetchApi("/student/add/project", formData, "POST");
-        if (response.status === true) {
-          notify(response.message);
-        } else {
-          notify1(response.message);
-        }
-        console.log("response data", response.status);
+    let payload = { ...formData };
+    payload.document = pdfFile;
+    if (userType == "guestUser") {
+      let response = await fetchApi("/api/add/project", payload, "POST");
+      if (response.status === true) {
+        notify(response.message);
+      } else {
+        notify1(response.message);
+      }
+    } else if (userType == "student") {
+      let response = await fetchApi("/student/add/project", payload, "POST");
+      if (response.status === true) {
+        notify(response.message);
+      } else {
+        notify1(response.message);
       }
     }
   };
-
-  // const handleFileUpload = async (e) => {
-  //   let file = e.target.files[0];
-  //   setPdfFile(URL.createObjectURL(file));
-  //   setFormData({ ...formData, document: pdfFile });
-  // };
-
-  const handleFileUpload = async (e) => {
-    let file = e.target.files[0];
-    const fileUrl = URL.createObjectURL(file); // Create the URL
-  
-    setPdfFile(fileUrl); // Set pdfFile with the URL
-    setFormData((prevData) => ({ ...prevData, document: fileUrl })); // Set document in the form data
-  };
-  
-
   const notify = (msg) => {
     toast.success(msg);
   };
@@ -110,7 +101,6 @@ const ProjectForm = () => {
   const notify1 = (msg) => {
     toast.error(msg);
   };
-  console.log("fileeeee>>>>", pdfFile);
   return (
     <>
       <div className="projectFormDiv1">
@@ -237,19 +227,16 @@ const ProjectForm = () => {
                 <br />
                 <input
                   type="file"
-                  //  value={formData.document}
-                  name="document"
-                  onChange={(e) => {
-                    handleFileUpload(e);
-                  }}
+                  accept=".pdf,.doc,.docx"
+                  onChange={(e) => uploadImage(e)}
                 />
+                <label>
+                  {" "}
+                  <h4 style={{ color: "red" }}>{loading ? "loading" : ""}</h4>
+                </label>
               </div>
               <ToastContainer icon={false} />
-              <button
-                type="submit"
-                className="btn btn-primary "
-                id="LogIn"
-              >
+              <button type="submit" className="btn btn-primary " id="LogIn">
                 Submit
               </button>
             </form>
