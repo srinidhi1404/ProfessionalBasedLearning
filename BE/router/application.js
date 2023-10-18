@@ -8,7 +8,7 @@ router.post("/login", application.login);
 router.post("/forgotpassword", application.forgotPassword);
 router.post("/resetpassword", application.resetPassword);
 router.post("/add/project", auth, application.postProject);
-router.get("/all/project", auth, application.getAllProjects);
+router.get("/all/project", application.getAllProjects);
 router.post("/send/otp", application.sendOtp);
 router.get("/user-details", auth, application.getUserDetails);
 

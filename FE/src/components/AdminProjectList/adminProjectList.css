@@ -1,0 +1,40 @@
+.tableWrap{
+    width: 80% !important;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10%;
+    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)
+
+}
+.Approved{
+    background-color: 	#198754;
+    padding: 2px;
+    width: 90px;
+    text-align: center;
+    color: white;
+    border-radius: 10px;
+}
+.Rejected{
+    background-color: 	red;
+    padding: 2px;
+    width: 90px;
+    text-align: center;
+    color: white;
+    border-radius: 10px;
+}
+.Rejected{
+    background-color: 	red;
+    padding: 2px;
+    width: 90px;
+    text-align: center;
+    color: white;
+    border-radius: 10px;
+}
+.PENDING{
+    background-color: 	#ffc107;
+    padding: 2px;
+    width: 90px;
+    text-align: center;
+    color: black;
+    border-radius: 10px;
+}

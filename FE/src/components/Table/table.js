@@ -7,7 +7,7 @@ const Table = ({ data }) => {
     <table className="tableBody">
       <thead>
         <tr>
-          <th>#</th>
+          <th className="p-3">#</th>
           <th>Project Title</th>
           <th>Description</th>
           <th>Start Date</th>
@@ -17,9 +17,9 @@ const Table = ({ data }) => {
       <tbody>
         {data?.map((item, index) => (
           <tr key={index}>
-            <td>{item.projectID}</td>
+            <td className="p-2">{item.projectID}</td>
             <td>{item.projectTitle}</td>
-            <td>{item.projectDescription}</td>
+            <td className="break-words">{item.projectDescription}</td>
             <td>{moment(item.startDate).format("DD-MM-YYYY")}</td>
             <td>{moment(item.endDate).format("DD-MM-YYYY")}</td>
           </tr>

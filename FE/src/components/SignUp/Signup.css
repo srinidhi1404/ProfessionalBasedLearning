@@ -118,16 +118,14 @@
   cursor: pointer;
 }
 
-.eye-icon {
+
+.new-eye-icon{
   position: absolute;
-  width: 20px;
-  height: 20px;
-  right: 8px;
-  bottom: 10px;
-  background-image: url(https://static-00.iconduck.com/assets.00/eye-password-hide-icon-512x512-iv45hct9.png);
-  background-size: cover;
-  cursor: pointer;
+  right: 105px;
+  top: 111px;
 }
+
+
 /* .strength-bar1{
   rotate: 10px;
 } */

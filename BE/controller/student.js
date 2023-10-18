@@ -155,24 +155,11 @@ const postProject = async (req, res) => {
 
 const getAllProjects = async (req, res) => {
   try {
-    const email = req.data.id;
-    const selectQuery = `
-    SELECT * FROM studentProject
-    WHERE (projectType = 1 OR (projectType = 0 AND email = ?))
-      AND (endDate IS NULL OR endDate >= CURDATE())
-  `;
-    const [projects] = await pool.query(selectQuery, [email]);
-    const studentQuery = `
-    SELECT * FROM projects
-    WHERE projectType = 1
-  `;
-    const [studentProjects] = await pool.query(studentQuery, [email]);
+    const selectQuery = "SELECT * FROM studentProject";
+    const [projects] = await pool.query(selectQuery);
 
-    let data = projects.concat(studentProjects);
-    console.log(data.length);
-    res.status(200).json({ data: data, status: true });
+    res.status(200).json({ projects, status: true });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       message: "An error occurred while fetching projects",
       status: false,

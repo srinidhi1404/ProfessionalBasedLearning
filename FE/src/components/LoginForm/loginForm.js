@@ -1,106 +1,108 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import ForgotPasswordForm from "../ForgotPassword/forgotPassword";
-import SignupForm from "../SignUp/signUp";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { validateForm } from "../validation";
+import { message } from "antd";
 import { fetchApi } from "../../Utils/Request";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Projects from "../Project/projects";
+import EyeIcon from ".././../asset/image/eye.png";
 
-const formDetails = {
-  email: "",
-  password: "",
-};
-const formDetails1 = {
-  email: "",
-  password: "",
-};
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+  const formDetails = {
+    email: localStorage.getItem("rememberedUsername") || "",
+    password: localStorage.getItem("rememberedPassword") || "",
+  };
   const [formData, setFormData] = useState({ ...formDetails });
-  const [formData1, setFormData1] = useState({ ...formDetails1 });
+
   const [show, setShow] = useState(false);
-  const [validationMessage, setValidationMessage] = useState("");
-  const [errors, setErrors] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
   const userType = localStorage.getItem("userType");
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setShowResetPassword(false);
+  };
   const handleShow = () => setShow(true);
 
-  const validationRules = {
-    email: [
-      {
-        required: true,
-        pattern: /\S+@\S+\.\S+/,
-        errorMessage: "Invalid email format",
-      },
-    ],
-    password: [{ required: true }],
-  };
+  useEffect(() => {
+    if (!localStorage.getItem("userType")) {
+      navigate("/");
+    }
+    localStorage.removeItem("token");
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
   ///-----------------------------guest login------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm(formData, validationRules);
-    setErrors(newErrors);
 
-    if (formData.email == "") {
-      notify1("Email is Required");
-    }
-    if (formData.password == "") {
-      notify1("Password is Required");
-    }
-    console.log("vishnu>>>>>>", formData.email);
+    if (userType === "guestUser") {
+      let response = await fetchApi("/api/login", formData, "POST");
 
-    if (Object.keys(newErrors).length === 0) {
-      if (userType === "guestUser") {
-        let response = await fetchApi("/api/login", formData, "POST");
+      if (response.status === true) {
+        messageApi.open({
+          type: "success",
+          content: response.message,
+        });
+        navigate("/dashboard");
 
-        if (response.status == true) {
-          notify(response.message);
-          // localStorage.setItem('auth','response.')
-          // Setting an item in local storage
-          localStorage.setItem("token", response.token);
-          console.log(">>>>>>>>>token", response.token);
-        } else {
-          notify1("Please Enter Correct Credential");
-        }
-        console.log("response data", response.status);
-      } else if (userType === "student") {
-        let response = await fetchApi("/student/login", formData, "POST");
-
-        if (response.status == true) {
-          notify(response.message);
-          // localStorage.setItem('auth','response.')
-          // Setting an item in local storage
-          localStorage.setItem("token", response.token);
-          console.log(">>>>>>>>>token", response.token);
-        } else {
-          notify1("Please Enter Correct Credential");
-        }
-        console.log("response data", response.status);
+        localStorage.setItem("token", response.token);
+        console.log(">>>>>>>>>token", response.token);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Please Enter Correct Credential",
+        });
       }
-      else if (userType === "admin") {
-        let response = await fetchApi("/admin/login", formData, "POST");
+      console.log("response data", response.status);
+    } else if (userType === "student") {
+      let response = await fetchApi("/student/login", formData, "POST");
 
-        if (response.status == true) {
-          notify(response.message);
-          // localStorage.setItem('auth','response.')
-          // Setting an item in local storage
-          localStorage.setItem("token", response.token);
-          console.log(">>>>>>>>>token", response.token);
-        } else {
-          notify1("Please Enter Correct Credential");
-        }
-        console.log("response data", response.status);
+      if (response.status === true) {
+        messageApi.open({
+          type: "success",
+          content: response.message,
+        });
+        navigate("/dashboard");
+
+        localStorage.setItem("token", response.token);
+        console.log(">>>>>>>>>token", response.token);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Please Enter Correct Credential",
+        });
       }
+      console.log("response data", response.status);
+    } else if (userType === "admin") {
+      let response = await fetchApi("/admin/login", formData, "POST");
+
+      if (response.status === true) {
+        messageApi.open({
+          type: "success",
+          content: response.message,
+        });
+        navigate("/dashboard");
+
+        localStorage.setItem("token", response.token);
+        console.log(">>>>>>>>>token", response.token);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Please Enter Correct Credential",
+        });
+      }
+      console.log("response data", response.status);
     }
   };
 
@@ -117,16 +119,9 @@ const LoginForm = () => {
     }
   };
 
-  const notify = (msg) => {
-    toast.success(msg);
-    navigate("/projects");
-  };
-  const notify1 = (msg) => {
-    toast.error(msg);
-  };
-
   return (
     <>
+      {contextHolder}
       <div>
         <div className="mainDiv">
           <img
@@ -158,24 +153,33 @@ const LoginForm = () => {
                       }}
                     />
                   </div>
-                  <div className="form-outline">
-                    <label className="form-label" for="form2Example2">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      id="form2Example2"
-                      className="form-control"
-                      name="password"
-                      value={formData.password}
-                      placeholder="Password"
-                      style={{ borderRadius: "20px" }}
-                      onChange={(e) => {
-                        handleChange(e);
-                      }}
-                      checked={rememberMe}
-                    />
+                  <div className="login-pass-wrap">
+                    <div className="form-outline relative">
+                      <label className="form-label" for="form2Example2">
+                        Password
+                      </label>
+                      <input
+                        type={passwordVisible ? "text" : "password"}
+                        id="form2Example2"
+                        className="form-control"
+                        name="password"
+                        value={formData.password}
+                        placeholder="Password"
+                        style={{ borderRadius: "20px" }}
+                        onChange={(e) => {
+                          handleChange(e);
+                        }}
+                        checked={rememberMe}
+                      />
+                      <div
+                        className="absolute right-5 top-[42px]"
+                        onClick={togglePasswordVisibility}
+                      >
+                        <img className="w-5" src={EyeIcon} alt="EyeIcon"></img>
+                      </div>
+                    </div>
                   </div>
+
                   <div className="row mb-4">
                     <div className="col d-flex ">
                       <div className="form-check">
@@ -198,7 +202,6 @@ const LoginForm = () => {
                       </div>
                     </div>
                   </div>
-                  <ToastContainer icon={false} />
                   <button
                     type="submit"
                     className="btn btn-primary mb-3 "
@@ -211,21 +214,20 @@ const LoginForm = () => {
                   <div>
                     <div className="col">
                       <p>
-                        {" "}
-                        <a onClick={() => handleShow()} className="forpass">
+                        <span onClick={() => handleShow()} className="forpass">
                           Forgot Password?
-                        </a>
+                        </span>
                       </p>
                     </div>
                     <div className="text-center">
                       <p>
                         External User?{" "}
-                        <a
+                        <span
                           onClick={() => navigate("/sign-up")}
                           className="register"
                         >
                           Register
-                        </a>
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -235,6 +237,8 @@ const LoginForm = () => {
                   handleClose={handleClose}
                   handleShow={handleShow}
                   show={show}
+                  showResetPassword={showResetPassword}
+                  setShowResetPassword={setShowResetPassword}
                 />
               </div>
             </div>

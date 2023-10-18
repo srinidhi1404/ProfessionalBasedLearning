@@ -1,65 +1,88 @@
-.LogoutDiv1{
-    width: 100%;
-    text-align: center;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    
-    
-
+.LogoutDiv1 {
+  width: 100%;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }
 
-.LogoutDiv2{
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    display: flex; 
-    flex-direction: row;
-    /* border: 2px solid black; */
-    height: auto;
-    gap: 25px;
+.LogoutDiv2 {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: auto;
 }
 
-.LogoutDiv3{
-    height: 100px;
-    color:  #006747;
-    font-weight: bold;
-    font-size: 25px;
-    /* border: solid; */
-    height: 100px;
-    align-items: center;
-    justify-content: center;
-    width: 408px;
-    display: flex;
+.LogoutDiv3 {
+  height: 100px;
+  color: #006747;
+  font-weight: bold;
+  font-size: 25px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
 }
-.LogoutDiv4{
-    color:  #006747;
-    font-weight: bold;
-    font-size: 25px;
-    /* border: solid !important; */
-    width: 210px !important;
-    display: flex;
-    cursor: pointer;
-    height: 100px;
-    text-align: center;
-    align-items: center;
+.LogoutDiv4 {
+  color: #006747;
+  font-weight: bold;
+  font-size: 25px;
+  display: flex;
+  cursor: pointer;
+  height: 100px;
+  padding: 0 15px;
+  text-align: center;
+  align-items: center;
 }
-.LogoutDiv4:hover{
-    background-color: #006747 !important;
-    color: white;
+
+.LogoutDiv2 .imageContainer {
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.LogoutDiv3:hover{
-    background-color: #006747 !important;
-    color: white;
+
+.LogoutDiv4:hover {
+  background-color: #006747 !important;
+  color: white;
 }
-.LogoutDiv2 img:hover{
-    background-color: #006747 !important;
-    color: white;
+.LogoutDiv3:hover {
+  background-color: #006747 !important;
+  color: white;
 }
-.logoutNavImg{
-    height: 100px;
+.LogoutDiv2 .imageContainer:hover {
+  background-color: #006747 !important;
+  color: white;
+}
+.logoutNavImg {
+  height: 68px;
+  padding: 0 30px;
+}
+
+.LogoutDiv4 .logoutNavImgRight {
+  color: #006747;
+  height: 40px;
+  padding: 0 10px;
+}
+
+.Logout_text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #006747;
+}
+
+.close_drawer {
+  font-size: 30px;
+  font-weight: bold;
+  color: #006747;
+  /* cursor: pointer; */
+  display: flex;
+  justify-content: right;
+  padding-right: 20px;
 }

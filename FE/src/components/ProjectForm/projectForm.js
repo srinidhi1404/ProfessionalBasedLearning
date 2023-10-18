@@ -1,17 +1,16 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./projectForm.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { fetchApi } from "../../Utils/Request";
-import * as XLSX from "xlsx";
+import "./projectForm.css";
 import Footer from "../Footer/footer";
 import NavbarLogout from "../NavLogout/navLogout";
 import axios from "axios";
-
+import moment from "moment"; // Import Moment.js
+import { message } from "antd";
+let userType = localStorage.getItem("userType");
 const formDetails = {
   projectTitle: "",
   projectDescription: "",
@@ -22,12 +21,23 @@ const formDetails = {
   document: "",
   projectType: "",
 };
+
 const ProjectForm = () => {
   const [formData, setFormData] = useState({ ...formDetails });
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState(false);
-  const [items, setItems] = useState([]);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible1, setPasswordVisible1] = useState(false);
   const [pdfFile, setPdfFile] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
+  const [fieldErrors, setFieldErrors] = useState({
+    projectTitle: "",
+    projectDescription: "",
+    startDate: "",
+    endDate: "",
+    contactNumber: "",
+    projectSummary: "",
+    projectType: "",
+  });
 
   const options = [
     { value: "", label: "Select" },
@@ -42,6 +52,8 @@ const ProjectForm = () => {
       ...prevData,
       [name]: name === "projectType" ? value === "true" : value,
     }));
+    // Clear the error message for the corresponding field
+    setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
   const uploadImage = async (e) => {
@@ -62,47 +74,97 @@ const ProjectForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.projectTitle == "") {
-      notify1("projectTitle is Required");
-      setErrors(true);
-    }
-    if (formData.projectDescription == "") {
-      notify1("projectDescription is Required");
-      setErrors(true);
-    }
-    if (formData.contactNumber == "") {
-      notify1("contactNumber is Required");
-      setErrors(true);
+    let hasErrors = false;
+    if (formData.projectTitle === "") {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        projectTitle: "Project Title is Required",
+      }));
+      hasErrors = true;
     }
 
+    if (formData.projectDescription === "") {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        projectDescription: "projectDescription is Required",
+      }));
+      hasErrors = true;
+    }
+    if (formData.startDate === "") {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        startDate: "Start Date is Required",
+      }));
+      hasErrors = true;
+    }
+    if (formData.endDate === "") {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        endDate: "End Date is Required",
+      }));
+      hasErrors = true;
+    }
+    if (formData.contactNumber === "") {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        contactNumber: "Contact is Required",
+      }));
+      hasErrors = true;
+    }
+    if (formData.projectSummary === "") {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        projectSummary: "Project Summary is Required",
+      }));
+      hasErrors = true;
+    }
+    if (hasErrors) {
+      // There are errors, do not proceed with form submission
+      return;
+    }
     let userType = localStorage.getItem("userType");
     let payload = { ...formData };
     payload.document = pdfFile;
-    if (userType == "guestUser") {
+    if (userType === "guestUser") {
       let response = await fetchApi("/api/add/project", payload, "POST");
       if (response.status === true) {
-        notify(response.message);
+        messageApi.open({
+          type: "success",
+          content: response.message,
+        });
       } else {
-        notify1(response.message);
+        messageApi.open({
+          type: "error",
+          content: response.message,
+        });
       }
-    } else if (userType == "student") {
+    } else if (userType === "student") {
       let response = await fetchApi("/student/add/project", payload, "POST");
       if (response.status === true) {
-        notify(response.message);
+        messageApi.open({
+          type: "success",
+          content: response.message,
+        });
       } else {
-        notify1(response.message);
+        messageApi.open({
+          type: "error",
+          content: response.message,
+        });
       }
     }
   };
-  const notify = (msg) => {
-    toast.success(msg);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
-  const notify1 = (msg) => {
-    toast.error(msg);
+  const togglePasswordVisibility1 = () => {
+    setPasswordVisible1(!passwordVisible1);
   };
+
   return (
     <>
+      {contextHolder}
       <div className="projectFormDiv1">
         <div className="NavbarLogout">
           <NavbarLogout />
@@ -118,7 +180,9 @@ const ProjectForm = () => {
                 <input
                   type="text"
                   id="form2Example1"
-                  className="form-control"
+                  className={`form-control ${
+                    fieldErrors.projectTitle && "is-invalid"
+                  }`}
                   placeholder="Enter Project Title"
                   value={formData.projectTitle}
                   name="projectTitle"
@@ -126,6 +190,11 @@ const ProjectForm = () => {
                     handleChange(e);
                   }}
                 />
+                {fieldErrors.projectTitle && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.projectTitle}
+                  </div>
+                )}
               </div>
               <div className="form-outline1">
                 <label className="form-label" for="form2Example2">
@@ -134,7 +203,9 @@ const ProjectForm = () => {
                 <input
                   type="text"
                   id="form2Example2"
-                  className="form-control"
+                  className={`form-control ${
+                    fieldErrors.projectDescription && "is-invalid"
+                  }`}
                   name="projectDescription"
                   value={formData.projectDescription}
                   placeholder="Describe your project"
@@ -142,51 +213,108 @@ const ProjectForm = () => {
                     handleChange(e);
                   }}
                 />
+                {fieldErrors.projectDescription && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.projectDescription}
+                  </div>
+                )}
               </div>
               <div className="form-outline1">
-                <label>Start Date</label>
-                <input
-                  type="date"
-                  id="form2Example2"
-                  className="form-control"
-                  name="startDate"
-                  value={formData.startDate}
-                  placeholder="Describe your project"
-                  onChange={(e) => {
-                    handleChange(e);
-                  }}
-                />
+                <label className="form-label">Start Date</label>
+                <div className="date-wrap">
+                  <input
+                    type={passwordVisible ? "date" : "text"}
+                    id="form2Example2"
+                    className={`form-control ${
+                      fieldErrors.startDate && "is-invalid"
+                    }`}
+                    name="startDate"
+                    onFocus={togglePasswordVisibility}
+                    value={formData.startDate}
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                  />
+                  {passwordVisible ? (
+                    <div className="custom-placeHolder">mm/dd/yyyy</div>
+                  ) : moment(formData.startDate).format("MM/DD/YYYY") ===
+                    "Invalid date" ? (
+                    <div className="custom-placeHolder">mm/yy/yyyy</div>
+                  ) : (
+                    <div className="custom-placeHolder">
+                      {moment(formData.startDate).format("MM/DD/YYYY")}
+                    </div>
+                  )}
+                  {fieldErrors.startDate && (
+                    <div className="invalid-feedback">
+                      {fieldErrors.startDate}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="form-outline1">
-                <label>End Date</label>
+                <label className="form-label">End Date</label>
 
-                <input
-                  type="date"
-                  id="form2Example2"
-                  className="form-control"
-                  name="endDate"
-                  value={formData.endDate}
-                  placeholder="Describe your project"
-                  onChange={(e) => {
-                    handleChange(e);
-                  }}
-                />
+                <div className="date-wrap">
+                  <input
+                    type={passwordVisible1 ? "date" : "text"}
+                    id="form2Example2"
+                    className={`form-control ${
+                      fieldErrors.endDate && "is-invalid"
+                    }`}
+                    name="endDate"
+                    onFocus={togglePasswordVisibility1}
+                    value={formData.endDate}
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                  />
+                  {passwordVisible1 ? (
+                    <div className="custom-placeHolder">mm/dd/yyyy</div>
+                  ) : moment(formData.endDate).format("MM/DD/YYYY") ===
+                    "Invalid date" ? (
+                    <div className="custom-placeHolder">mm/yy/yyyy</div>
+                  ) : (
+                    <div className="custom-placeHolder">
+                      {moment(formData.endDate).format("MM/DD/YYYY")}
+                    </div>
+                  )}
+                  {fieldErrors.endDate && (
+                    <div className="invalid-feedback">
+                      {fieldErrors.endDate}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="form-outline1">
                 <label className="form-label" for="form2Example2">
                   Contact Number
                 </label>
-                <input
-                  type="text"
-                  id="form2Example2"
-                  className="form-control"
-                  name="contactNumber"
-                  value={formData.contactNumber}
-                  placeholder="Enter Your Contact Number"
-                  onChange={(e) => {
-                    handleChange(e);
-                  }}
-                />
+                <div className="wrap-con">
+                  <input
+                    type="number"
+                    id="form2Example2"
+                    className={`form-control ${
+                      fieldErrors.contactNumber && "is-invalid"
+                    }`}
+                    name="contactNumber"
+                    value={formData.contactNumber}
+                    placeholder="Enter Your Contact Number"
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                  />
+                  {fieldErrors.contactNumber && (
+                    <div className="invalid-feedback">
+                      {fieldErrors.contactNumber}
+                    </div>
+                  )}
+                  {userType === "student" ? (
+                    <div className="con-code">+1</div>
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
               <div className="form-outline1">
                 <label className="form-label" for="form2Example2">
@@ -195,7 +323,9 @@ const ProjectForm = () => {
                 <input
                   type="text"
                   id="form2Example2"
-                  className="form-control"
+                  className={`form-control ${
+                    fieldErrors.projectSummary && "is-invalid"
+                  }`}
                   name="projectSummary"
                   value={formData.projectSummary}
                   placeholder="Summarize Your Project"
@@ -203,9 +333,14 @@ const ProjectForm = () => {
                     handleChange(e);
                   }}
                 />
+                {fieldErrors.projectSummary && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.projectSummary}
+                  </div>
+                )}
               </div>
               <div className="form-outline1">
-                <label>Project Type</label>
+                <label className="form-label">Project Type</label>
                 <br />
                 <select
                   onChange={(e) => {
@@ -213,7 +348,9 @@ const ProjectForm = () => {
                   }}
                   value={formData.projectType}
                   name="projectType"
-                  className="form-control"
+                  className={`form-control ${
+                    fieldErrors.projectType && "is-invalid"
+                  }`}
                 >
                   {options.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -221,9 +358,14 @@ const ProjectForm = () => {
                     </option>
                   ))}
                 </select>
+                {fieldErrors.projectType && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.projectType}
+                  </div>
+                )}
               </div>
               <div className="form-outline1">
-                <label>Upload File</label>
+                <label className="form-label">Upload File</label>
                 <br />
                 <input
                   type="file"
@@ -235,7 +377,6 @@ const ProjectForm = () => {
                   <h4 style={{ color: "red" }}>{loading ? "loading" : ""}</h4>
                 </label>
               </div>
-              <ToastContainer icon={false} />
               <button type="submit" className="btn btn-primary " id="LogIn">
                 Submit
               </button>
