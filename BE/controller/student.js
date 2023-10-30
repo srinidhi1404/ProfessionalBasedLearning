@@ -2,10 +2,12 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const pool = require("../pool");
 const config = require("../config");
+const bookidgen = require("bookidgen");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     if (!email || !password) {
       res.json({ message: "Enter all data", status: false });
@@ -14,11 +16,15 @@ const login = async (req, res) => {
       const [results] = await pool.execute(sqlQuery, [email]);
 
       if (results.length === 0) {
-        res.json({ message: "student does not exist", status: false });
+        res.json({ message: "Student does not exist", status: false });
       } else {
         const userData = results[0];
-
-        if (userData.password === password) {
+        if (userData.disable) {
+          res.json({ message: "Student is disabled", status: false });
+          return; // Exit the function if the student is disabled
+        }
+        const passwordMatch = await bcrypt.compare(password, userData.password);
+        if (passwordMatch) {
           const token = jwt.sign(
             {
               id: userData.email,
@@ -44,33 +50,35 @@ const login = async (req, res) => {
     res.json({ message: err.message, status: false });
   }
 };
+
 const signup = async (req, res) => {
   try {
     const { firstName, secondName, email, password } = req.body;
 
-    // Check if any required field is missing
     if (!firstName || !secondName || !email || !password) {
       res.json({ message: "Enter all data", status: false });
       return;
     }
-
-    // Check if the email already exists in the database
     const checkEmailQuery = "SELECT * FROM student WHERE email = ?";
     const [existingUser] = await pool.query(checkEmailQuery, [email]);
     if (existingUser.length > 0) {
       res.json({ message: "Student already exists", status: false });
       return;
     }
-
-    // Insert the new student
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     const insertQuery =
       "INSERT INTO student (firstName, secondName, email, password) VALUES (?, ?, ?, ?)";
-    await pool.query(insertQuery, [firstName, secondName, email, password]);
-
+    await pool.query(insertQuery, [
+      firstName,
+      secondName,
+      email,
+      hashedPassword,
+    ]);
     res
       .status(201)
       .json({ message: "Student signed up successfully", status: true });
   } catch (error) {
+    console.log(error.message);
     res
       .status(500)
       .json({ message: "An error occurred while signing up", status: false });
@@ -123,11 +131,18 @@ const postProject = async (req, res) => {
       const email = req.data.id;
       const firstName = req.data.firstName;
       const secondName = req.data.secondName;
+      const projectId = bookidgen("STD-", 14522, 199585);
+      const imageQuery = "SELECT id, image FROM student WHERE email = ?";
+      const [image] = await pool.query(imageQuery, [email]);
+      console.log(image[0].image);
+      const profileImage = image[0].image;
+      const userId = image[0].id;
       const insertQuery =
-        "INSERT INTO studentProject (projectTitle,email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, firstName, secondName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO studentProject (projectTitle,projectId,email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, firstName, secondName, image, userId) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
       await pool.query(insertQuery, [
         projectTitle,
+        projectId,
         email,
         projectDescription,
         startDate,
@@ -138,6 +153,8 @@ const postProject = async (req, res) => {
         document,
         firstName,
         secondName,
+        profileImage,
+        userId,
       ]);
 
       res
@@ -147,19 +164,104 @@ const postProject = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "An error occurred while posting the project",
+      message: error.message,
       status: false,
     });
   }
 };
 
+const uploadImage = async (req, res) => {
+  try {
+    const email = req.data.id;
+    const { image } = req.body;
+    if (!image) {
+      res.json({ message: "No image data provided", status: false });
+      return;
+    }
+    const checkStudentQuery = "SELECT * FROM student WHERE email = ?";
+    const [existingStudent] = await pool.query(checkStudentQuery, [email]);
+    if (existingStudent.length === 0) {
+      res.json({ message: "Student does not exist", status: false });
+      return;
+    }
+    const updateImageQuery = "UPDATE student SET image = ? WHERE email = ?";
+    await pool.query(updateImageQuery, [image, email]);
+    const updateProjectsImageQuery = `
+    UPDATE studentProject
+    SET image = ?
+    WHERE email = ?
+    `;
+    const [result] = await pool.query(updateProjectsImageQuery, [image, email]);
+    console.log(result);
+    res.json({ message: "Image updated successfully", status: true });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      message: "An error occurred during image upload",
+      status: false,
+    });
+  }
+};
+
+function getCommentsByProjectId(comments, projectId) {
+  return comments.filter((comment) => comment.projectId === projectId);
+}
 const getAllProjects = async (req, res) => {
   try {
-    const selectQuery = "SELECT * FROM studentProject";
-    const [projects] = await pool.query(selectQuery);
+    const email = req.data.id;
+    const selectQuery = `
+    SELECT * FROM studentProject
+    WHERE (projectType = 1 OR (projectType = 0 AND email = ?))
+      AND (endDate IS NULL OR endDate >= CURDATE())
+  `;
+    const [projects] = await pool.query(selectQuery, [email]);
+    const studentQuery = `
+    SELECT * FROM projects
+    WHERE projectType = 1
+  `;
+    const [studentProjects] = await pool.query(studentQuery, [email]);
 
-    res.status(200).json({ projects, status: true });
+    let data = projects.concat(studentProjects);
+    const query = `
+    SELECT
+      c.id AS commentId,
+      c.text AS commentText,
+      c.createdAt AS createdAt,
+      c.flag AS flag,
+      c.disable AS disable,
+      c.projectId AS projectId,
+      c.firstName As firstName,
+      c.secondName As secondName,
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id', sc.id,
+          'text', sc.text,
+          'createdAt', sc.createdAt,
+          'flag', sc.flag,
+          'disable', sc.disable,
+          'firstName', sc.firstName,
+          'secondName', sc.secondName
+        )
+      ) AS subComments
+    FROM
+      comments c
+    LEFT JOIN
+      subComments sc
+    ON c.id = sc.commentId
+    GROUP BY
+      c.id
+    ORDER BY
+      c.createdAt DESC
+    LIMIT 0, 25
+  `;
+    const [comments] = await pool.query(query, [email]);
+    console.log(comments);
+    data.forEach((element) => {
+      element.comment = getCommentsByProjectId(comments, element.projectId);
+    });
+    res.status(200).json({ data: data, status: true });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({
       message: "An error occurred while fetching projects",
       status: false,
@@ -203,6 +305,96 @@ const getStudentDetails = async (req, res) => {
   }
 };
 
+const postComment = async (req, res) => {
+  try {
+    const { text, projectId } = req.body;
+    if (!text || !projectId) {
+      return res.json({ message: "All fields are required", status: false });
+    }
+    let firstName, secondName;
+    const userEmail = req.data.id;
+    const [userRows] = await pool.execute(
+      "SELECT firstName, secondName FROM student WHERE email = ?",
+      [userEmail]
+    );
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+    firstName = userRows[0].firstName;
+    secondName = userRows[0].secondName;
+    const insertQuery = `
+      INSERT INTO comments (firstName, secondName, text, projectId)
+      VALUES (?, ?, ?, ?)
+    `;
+    await pool.execute(insertQuery, [firstName, secondName, text, projectId]);
+    res
+      .status(201)
+      .json({ message: "Comment added successfully", status: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while adding the comment",
+      status: false,
+    });
+  }
+};
+const postSubComment = async (req, res) => {
+  try {
+    const { text, commentId } = req.body;
+    if (!text || !commentId) {
+      return res
+        .status(400)
+        .json({ message: "All fields are required", status: false });
+    }
+    let firstName, secondName;
+    const userEmail = req.data.id;
+    const [userRows] = await pool.execute(
+      "SELECT firstName, secondName FROM student WHERE email = ?",
+      [userEmail]
+    );
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: "User not found.", status: false });
+    }
+    firstName = userRows[0].firstName;
+    secondName = userRows[0].secondName;
+    const insertQuery = `
+      INSERT INTO subComments (firstName, secondName, text, commentId)
+      VALUES (?, ?, ?, ?)
+    `;
+    await pool.execute(insertQuery, [firstName, secondName, text, commentId]);
+    res
+      .status(201)
+      .json({ message: "Sub-comment added successfully", status: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while adding the sub-comment",
+      status: false,
+    });
+  }
+};
+const getRequst = async (req, res) => {
+  try {
+    const email = req.data.id;
+    console.log(email);
+    const selectQuery = `
+      SELECT * FROM request WHERE projectEmail = ?
+    `;
+    const [result] = await pool.query(selectQuery, [email]);
+    console.log(result);
+    res.status(200).json({
+      data: result,
+      message: "Requests retrieved successfully",
+      status: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while fetching requests",
+      status: false,
+    });
+  }
+};
 module.exports = {
   signup,
   login,
@@ -210,4 +402,8 @@ module.exports = {
   postProject,
   getAllProjects,
   getStudentDetails,
+  postComment,
+  postSubComment,
+  uploadImage,
+  getRequst,
 };

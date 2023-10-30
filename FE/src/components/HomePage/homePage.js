@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
-import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import LionIMg from "../../asset/image/lionimg.webp"
 import "./homepage.css";
+import Footer from "../Footer/footer";
 const HomePage = () => {
   useEffect(() => {
     localStorage.removeItem("userType");
@@ -30,19 +31,25 @@ const HomePage = () => {
   return (
     <>
       <div className="maindiv1">
-        <div className="container1">
-          <Button className="button" onClick={Admin}>
-            Admin Login
-          </Button>
-          <Button className="button" onClick={Student}>
-            Student Login
-          </Button>
-          <Button className="button" onClick={Guest}>
-            Guest login
-          </Button>
+        <div className="loginbtncon">
+          <div className="left_lion">
+            <img src={LionIMg} alt=""></img>
         </div>
-        {/* <LoginForm user={user} admin={admin} guestUser={guestUser}  /> */}
+          <div className="right-btns">
+
+            <div className="btns-wrap">
+    
+              <button className="mybtn btn-background-slide"  onClick={Admin} >ADMIN LOGIN</button>
+              <button className="mybtn btn-background-slide"  onClick={Student}  >STUDENT LOGIN</button>
+              <button className="mybtn btn-background-slide"  onClick={Guest} >GUEST LOGIN</button>
+            </div>
+          </div>
+        </div>
+<Footer/>
+      
+
       </div>
+
     </>
   );
 };

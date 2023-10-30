@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+.mainDiv{
+  background-image: url(../../asset/image/dgdgpfe.jpeg);
+  background-size: cover;
+  height: 100vh;
+}

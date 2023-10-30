@@ -14,7 +14,6 @@ const ResetPassword = ({ show1, email, handleClose1 }) => {
   };
   const [messageApi, contextHolder] = message.useMessage();
   const [formData, setFormData] = useState({ ...formDetails });
-  console.log("email", email);
   const [errors, setErrors] = useState();
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -37,7 +36,6 @@ const ResetPassword = ({ show1, email, handleClose1 }) => {
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
-  console.log("form data", formData);
 
   const validate = async () => {
     if (
@@ -63,7 +61,6 @@ const ResetPassword = ({ show1, email, handleClose1 }) => {
     e.preventDefault();
 
     let val = await validate();
-    console.log("value", val);
     if (val) {
       setFormData({ ...formData, ["email"]: email });
       let payload = {
@@ -78,6 +75,7 @@ const ResetPassword = ({ show1, email, handleClose1 }) => {
           content: response.message,
           style: { position: "absolute", top: "10", right: "0" },
         });
+        handleClose1(true)
       } else {
         messageApi.open({
           type: "error",
@@ -87,7 +85,6 @@ const ResetPassword = ({ show1, email, handleClose1 }) => {
       }
     } else {
       setErrors("Please check all fields");
-      console.log("errors", errors);
       messageApi.open({
         type: "error",
         content: "Please check all fields",

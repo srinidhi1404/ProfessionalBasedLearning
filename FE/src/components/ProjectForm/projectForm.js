@@ -5,12 +5,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./projectForm.css";
 import { fetchApi } from "../../Utils/Request";
 import "./projectForm.css";
-import Footer from "../Footer/footer";
-import NavbarLogout from "../NavLogout/navLogout";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import moment from "moment"; // Import Moment.js
 import { message } from "antd";
-let userType = localStorage.getItem("userType");
+
 const formDetails = {
   projectTitle: "",
   projectDescription: "",
@@ -23,11 +23,14 @@ const formDetails = {
 };
 
 const ProjectForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ ...formDetails });
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [passwordVisible1, setPasswordVisible1] = useState(false);
   const [pdfFile, setPdfFile] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [imgError, setImageError] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [fieldErrors, setFieldErrors] = useState({
     projectTitle: "",
@@ -40,7 +43,6 @@ const ProjectForm = () => {
   });
 
   const options = [
-    { value: "", label: "Select" },
     { value: true, label: "Public" },
     { value: false, label: "Private" },
   ];
@@ -65,6 +67,8 @@ const ProjectForm = () => {
       formData
     );
     if (u.data.status) {
+      setImageError(false);
+      setFileName(e.target.files[0].name);
       setPdfFile(u.data.secureUrl);
       setLoading(false);
     } else {
@@ -118,6 +122,19 @@ const ProjectForm = () => {
       }));
       hasErrors = true;
     }
+    if (formData.projectType === "") {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        projectType: "Project Type is Required",
+      }));
+      hasErrors = true;
+    }
+    if (pdfFile === "") {
+      setImageError(true);
+      hasErrors = true;
+    } else {
+      setImageError(false);
+    }
     if (hasErrors) {
       // There are errors, do not proceed with form submission
       return;
@@ -132,6 +149,7 @@ const ProjectForm = () => {
           type: "success",
           content: response.message,
         });
+        navigate("/dashboard");
       } else {
         messageApi.open({
           type: "error",
@@ -145,6 +163,7 @@ const ProjectForm = () => {
           type: "success",
           content: response.message,
         });
+        navigate("/dashboard");
       } else {
         messageApi.open({
           type: "error",
@@ -166,9 +185,6 @@ const ProjectForm = () => {
     <>
       {contextHolder}
       <div className="projectFormDiv1">
-        <div className="NavbarLogout">
-          <NavbarLogout />
-        </div>
         <div className="div2">
           <div className="div3">
             <h1>Post a New Project</h1>
@@ -200,7 +216,7 @@ const ProjectForm = () => {
                 <label className="form-label" for="form2Example2">
                   Project Description:
                 </label>
-                <input
+                <textarea
                   type="text"
                   id="form2Example2"
                   className={`form-control ${
@@ -309,11 +325,11 @@ const ProjectForm = () => {
                       {fieldErrors.contactNumber}
                     </div>
                   )}
-                  {userType === "student" ? (
+                  {/* {userType === "student" ? (
                     <div className="con-code">+1</div>
                   ) : (
                     ""
-                  )}
+                  )} */}
                 </div>
               </div>
               <div className="form-outline1">
@@ -351,7 +367,9 @@ const ProjectForm = () => {
                   className={`form-control ${
                     fieldErrors.projectType && "is-invalid"
                   }`}
+                  // required
                 >
+                  <option value="">Select</option>
                   {options.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -366,17 +384,24 @@ const ProjectForm = () => {
               </div>
               <div className="form-outline1">
                 <label className="form-label">Upload File</label>
-                <br />
                 <input
                   type="file"
                   accept=".pdf,.doc,.docx"
+                  id="upload"
+                  hidden
                   onChange={(e) => uploadImage(e)}
                 />
-                <label>
-                  {" "}
-                  <h4 style={{ color: "red" }}>{loading ? "loading" : ""}</h4>
-                </label>
+                <label for="upload" className="fileupload">
+                  {loading ? "Loading" : "Choose file"}
+                </label>{" "}
+                <label className="form-label">{fileName}</label>
+                {imgError ? (
+                  <label className="doc-err">
+                    Project Document is Required
+                  </label>
+                ) : null}
               </div>
+
               <button type="submit" className="btn btn-primary " id="LogIn">
                 Submit
               </button>
@@ -384,7 +409,6 @@ const ProjectForm = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

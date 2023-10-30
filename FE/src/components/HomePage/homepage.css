@@ -1,37 +1,99 @@
-.maindiv1{
-    /* background-color:aqua; */
-    /* border: solid; */
-    /* width: 1300px;
-    height: 700px; */
-    display: flex;
-    justify-content:center ;
-    align-items:center;
-    
+.maindiv1 {
+    background-image: url(../../asset/image/bg_img.jpg);
+    background-size: cover;
+    height: 100vh;
 }
-.container1{
+
+.footer {
+    height: 20vh;
+    background-color: black;
+}
+
+.loginbtncon {
+    height: 80vh;
+
+}
+
+.left_lion img {
+    height: 668px;
+}
+
+.loginbtncon {
+    display: flex;
+    justify-content: center;
+}
+
+.left_lion {
+    width: 40%;
+}
+
+.right-btns {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btns-wrap {
     display: flex;
     flex-direction: column;
-    /* border: solid red; */
-    column-gap: 5px;
-    width: 25%;
-    height: 30%;
-    margin-top: 15%;
-    gap: 5% ;
-
+    margin-top: 120px;
 }
 
-.button{
-    width: 90%;
-    height: 100%;
-    border: solid;
-    justify-content:center ;
-    align-items:center;
-    background-color: #006747;
-}
-.button:hover{
-    background-color: #006747;
-}
-.button:click{
-    background-color: #006747;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
+
+
+.mybtn {
+    background-color: var(--background-color);
+    color: #006747;
+    padding: 16px 160px;
+    border: none;
+    outline: none;
+    position: relative;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 20px;
+    margin: 10px 0px;
+    --background-color: #e1e1e1;
+    --border-size: 2px;
+    --accent-color: #B6B7BA;
+}
+
+
+
+
+
+.mybtn.btn-background-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+    background-color: var(--accent-color);
+    transition: transform 300ms ease-in-out;
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+.mybtn.btn-background-slide:hover::before,
+.mybtn.btn-background-slide:focus::before {
+    transform: scaleX(1);
+}
+
+.mybtn.btn-background-slide {
+    transition: color 300ms ease-in-out;
+    z-index: 1;
+}
+
+
+.mybtn.btn-background-slide:hover,
+.mybtn.btn-background-slide:focus {
+    color: #006747;
+}

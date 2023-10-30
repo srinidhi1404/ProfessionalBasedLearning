@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import NavbarLogout from "../NavLogout/navLogout";
 import "./userProfile.css";
 import axios from "axios";
-
 import Table from "../Table/table";
-import Footer from "../Footer/footer";
+import { Button } from "bootstrap";
 
 const UserProfile = () => {
   const userApi = "http://localhost:3000/student/student-details";
@@ -12,6 +10,15 @@ const UserProfile = () => {
   const token = localStorage.getItem("token");
   const [GuestUserDetail, SetGuestUserDetail] = useState("");
   const [UserDetail, SetUserDetail] = useState("");
+  console.log("UserDetail", UserDetail);
+
+  const [loading, setLoading] = useState(false);
+  const [pdfFile, setPdfFile] = useState("");
+  console.log("pdfFile", pdfFile);
+  const [image, setImage] = useState("");
+  const [values, setValues] = useState({
+    document: "",
+  });
 
   const userType = localStorage.getItem("userType");
   useEffect(() => {
@@ -23,7 +30,9 @@ const UserProfile = () => {
           },
         })
         .then((response) => {
+          console.log("response.data", response.data);
           SetGuestUserDetail(response.data);
+          setImage(response.data.data.projects[0].image);
         })
         .catch((error) => {});
     } else if (userType === "student") {
@@ -34,13 +43,83 @@ const UserProfile = () => {
           },
         })
         .then((response) => {
+          console.log("response.data", response.data.data.projects[0].image);
           SetUserDetail(response.data);
+          setImage(response.data.data.projects[0].image);
         })
         .catch((error) => {});
     }
   }, []);
 
-  //Removing unneccessary code by storing data conditionally
+  const handleImageClick = () => {
+    document.getElementById("upload").click(); // Trigger file input click when the image is clicked
+  };
+
+  const handlePicUpload = async () => {
+    try {
+      // Include your token in the headers
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+      };
+
+      // Upload the image and get the URL
+      const response = await axios.post(
+        "http://localhost:3000/student/add/image",
+        { image: pdfFile },
+        config
+      );
+
+      if (response.data.status) {
+        // Update your PDF state with the image URL
+        setValues({
+          ...values,
+          document: response.data.url,
+        });
+
+        // Reload the page to see the changes
+        window.location.reload();
+      } else {
+        // Handle the case when image upload fails
+        // You can show an error message or take appropriate action
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle errors here
+    }
+  };
+
+  const uploadImage = async (e) => {
+    setLoading(true);
+    let formData = new FormData();
+    formData.append("image", e.target.files[0]);
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/upload/image`,
+        formData
+      );
+
+      if (response.data.status) {
+        setPdfFile(response.data.url);
+
+        setValues({
+          ...values,
+          document: response.data.secureUrl,
+        });
+        setLoading(false);
+      } else {
+        setLoading(false);
+        // toast.error('Failed to   upload document');
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setLoading(false);
+      // toast.error('An error occurred while uploading the document');
+    }
+  };
+
   const userData =
     userType === "student"
       ? UserDetail
@@ -51,17 +130,20 @@ const UserProfile = () => {
   return (
     <>
       <div className="profileDiv1">
-        <div className="profileDiv2">
-          <NavbarLogout />
-        </div>
         <h1 className="profileDiv3">User Profile</h1>
         <div className="profileDiv4">
-          <div className="profileDiv5">
+          {/* <div className="profileDiv5" onClick={handleImageClick}>
             <img
-              src="https://projectbasedlearningexplorer.onrender.com/images/logo.png"
+              src={image}
               alt="logo"
             />
-          </div>
+          </div> */}
+          {/* Rest of your code */}
+          {/* <div style ={{display:"flex"}}>
+          <input type="file" accept="jpg" id="upload" hidden onChange={(e) => uploadImage(e)} />
+          <label for="upload" className="fileupload">{loading ? "Loading" : "Choose file"} </label>
+          <button  className="fileupload" onClick={handlePicUpload}>Submit</button>
+          </div> */}
           <div className="profileDiv6">
             {userData ? (
               <>
@@ -115,7 +197,6 @@ const UserProfile = () => {
             </div>
           )}
         </div>
-        <Footer />
       </div>
     </>
   );

@@ -15,10 +15,15 @@
   border-radius: 10px;
   align-items: center;
   padding-top: 2%;
+  background-color: white;
 }
 .form-label {
   /* border: solid 1px black; */
   margin-top: 2px;
+}
+.doc-err {
+  color: #dc3545;
+  font-size: 0.875em;
 }
 .formDiv2 {
   /* border: solid; */
@@ -79,4 +84,12 @@
 }
 .input {
   border-radius: 40px;
+}
+.mainDiv{
+  background-image: url(../../asset/image/bgdgpfe.jpeg);
+  background-size: cover;
+  height: 100vh;
+}
+.mainDiv img{
+  mix-blend-mode: color-burn;
 }

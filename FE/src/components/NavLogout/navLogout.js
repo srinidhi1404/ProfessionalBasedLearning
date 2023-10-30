@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import "./navLogout.css";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -8,6 +8,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { message } from "antd";
+import Footer from "../Footer/footer";
 
 const NavbarLogout = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -66,8 +67,10 @@ const NavbarLogout = () => {
   );
 
   return (
+
+    < div className="total-wrap">
     <>
-      {contextHolder}
+    {contextHolder}
       <div className="LogoutDiv1">
         <div className="LogoutDiv2">
           <div className="imageContainer">
@@ -90,7 +93,15 @@ const NavbarLogout = () => {
       <Drawer anchor={"right"} open={state} onClose={toggleDrawer(false)}>
         {list("right")}
       </Drawer>
+      
     </>
+    <>
+    <Outlet/>
+    </>
+    <>
+    <Footer/>
+    </>
+    </div>
   );
 };
 

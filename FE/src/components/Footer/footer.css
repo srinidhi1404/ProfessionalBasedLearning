@@ -1,19 +1,27 @@
-.footerDiv1{
-    background-color: black;
-    border: solid;
+.contact-wrap{
     display: flex;
-    color:#8A8A8A;
-    width: 100%;
-    flex-direction: row;
-    justify-content: center;
-    height: 100px;
+    margin-top: 10px;
 }
+.footerDiv1{
+    min-height: 20vh;
+    background-color: black;
+}
+.footerDiv1{
+    color: white ;
+    padding: 2px 60px;
 
+}
 .footerDiv2{
-width: 50%;
+    font-size: 15px;
+    padding: 4px 23px;
+    font-weight: 700;
+    border-right: 2px solid white;
 }
-
-
 .footerDiv3{
-    width: 50%;
+    text-align: end;
+
+}
+.f-p-wrap{
+margin-top: 33px;
+margin-bottom: 10px;
 }

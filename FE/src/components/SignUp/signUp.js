@@ -26,7 +26,6 @@ const SignupForm = () => {
   const [formData, setFormData] = useState({ ...formDetails });
   const [emailverify, setVerifyEmail] = useState({ ...emailDetails });
   const [errors, setErrors] = useState({});
-  console.log({ password, errors }, "SignupForm");
   const [verifyOtp, setVerifyOTP] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const togglePasswordVisibility = () => {
@@ -82,15 +81,15 @@ const SignupForm = () => {
       });
     }
 
-    // console.log("errors" ,newErrors);
     if (Object.keys(newErrors).length === 0) {
       let response = await fetchApi("/api/signup", formData, "POST");
-      // console.log("response",response);
       if (response.status === true) {
         messageApi.open({
           type: "success",
           content: response.message,
         });
+        localStorage.setItem("userType", "guestUser");
+        navigate("/login");
       } else {
         messageApi.open({
           type: "error",

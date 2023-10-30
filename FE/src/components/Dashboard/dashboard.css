@@ -31,6 +31,7 @@
 
 .dashboardBody {
   padding: 60px 80px;
+  min-height: 88vh;
 }
 
 .my-card {
@@ -80,7 +81,7 @@
 }
 
 .newbutton {
-  border: 1px solid black;
+
   border-radius: 3px;
   width: 100px;
   height: 30px;

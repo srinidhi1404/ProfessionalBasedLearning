@@ -2,23 +2,28 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const pool = require("../pool");
 const config = require("../config");
+const bookidgen = require("bookidgen");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     if (!email || !password) {
       res.json({ message: "Enter all data", status: false });
     } else {
       const sqlQuery = "SELECT * FROM user WHERE email = ?";
       const [results] = await pool.execute(sqlQuery, [email]);
-
       if (results.length === 0) {
         res.json({ msg: "User does not exist" });
       } else {
         const userData = results[0];
-
-        if (userData.password === password) {
+        if (userData.disable) {
+          res.json({ message: "User is disabled", status: false });
+          return; // Exit the function if the user is disabled
+        }
+        const passwordMatch = await bcrypt.compare(password, userData.password);
+        if (passwordMatch) {
           const token = jwt.sign(
             {
               id: userData.email,
@@ -47,18 +52,13 @@ const login = async (req, res) => {
 const signup = async (req, res) => {
   try {
     const { firstName, secondName, email, password, otp } = req.body;
-
-    // Check if any required field is missing
     if (!firstName || !secondName || !email || !password || !otp) {
       res.json({ message: "Enter all data including OTP", status: false });
       return;
     }
-
-    // Check if the provided OTP is correct
     const otpQuery =
       "SELECT * FROM user WHERE email = ? AND resetToken = ? AND resetTokenExpiration > NOW()";
     const [otpRows] = await pool.query(otpQuery, [email, otp]);
-
     if (otpRows.length === 0) {
       res.json({
         message: "Invalid OTP or OTP has expired",
@@ -66,11 +66,15 @@ const signup = async (req, res) => {
       });
       return;
     }
-
-    // update the new user
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     const updateQuery =
       "UPDATE user SET firstName = ?, secondName = ?, password = ? WHERE email = ?";
-    await pool.query(updateQuery, [firstName, secondName, password, email]);
+    await pool.query(updateQuery, [
+      firstName,
+      secondName,
+      hashedPassword,
+      email,
+    ]);
     res
       .status(201)
       .json({ message: "User signed up successfully", status: true });
@@ -186,55 +190,56 @@ const forgotPassword = async (req, res) => {
 };
 
 async function sendResetEmail(email, token) {
-  const body = {
-    from: "dgpadmin@naveenrio.me",
+  const passwordMsg = {
+    from: "naveen@naveenrio.me",
     to: email,
-    subject: `RESET PASSWORD`,
+    subject: "RESET PASSWORD",
     html: `<div>OTP for reseting your Password ${token}. This will expire in an hour</div>`,
   };
-
-  const transport = nodemailer.createTransport({
-    host: "live.smtp.mailtrap.io", //sandbox.smtp.mailtrap.io",
-    port: 587,
-    auth: {
-      user: "api", //86207576053cfe",
-      pass: "82bc5abcc46929231dcc93949027783b", //df87b6e5a6cb1d"
-    },
-  });
-
-  await transport.sendMail(body, (err) => {
-    if (err) {
-      return console.log("error occurs", err);
-    } else {
-      return console.log("email sent");
-    }
-  });
+  nodemailer
+    .createTransport({
+      auth: {
+        user: GRIEVANCE_EMAIL,
+        pass: GRIEVANCE_EMAIL_PASSWORD,
+      },
+      port: 465,
+      secure: true,
+      host: "smtp.hostinger.com",
+    })
+    .sendMail(passwordMsg, (err) => {
+      if (err) {
+        return console.log("error while sending mail", err);
+      } else {
+        return console.log("email sent");
+      }
+    });
 }
-
+const GRIEVANCE_EMAIL = "naveen@naveenrio.me";
+const GRIEVANCE_EMAIL_PASSWORD = "N@veen4752";
 async function sendInitialOtp(email, token) {
-  const body = {
-    from: "dgpadmin@naveenrio.me",
+  const passwordMsg = {
+    from: "naveen@naveenrio.me",
     to: email,
-    subject: `OTP verification`,
+    subject: "OTP verification",
     html: `<div>OTP verification for your email ${token}. This will expire in an hour</div>`,
   };
-
-  const transport = nodemailer.createTransport({
-    host: "live.smtp.mailtrap.io", //sandbox.smtp.mailtrap.io",
-    port: 587,
-    auth: {
-      user: "api", //86207576053cfe",
-      pass: "82bc5abcc46929231dcc93949027783b", //df87b6e5a6cb1d"
-    },
-  });
-
-  await transport.sendMail(body, (err) => {
-    if (err) {
-      return console.log("error occurs", err);
-    } else {
-      return console.log("email sent");
-    }
-  });
+  nodemailer
+    .createTransport({
+      auth: {
+        user: GRIEVANCE_EMAIL,
+        pass: GRIEVANCE_EMAIL_PASSWORD,
+      },
+      port: 465,
+      secure: true,
+      host: "smtp.hostinger.com",
+    })
+    .sendMail(passwordMsg, (err) => {
+      if (err) {
+        return console.log("error while sending mail", err);
+      } else {
+        return console.log("email sent");
+      }
+    });
 }
 const resetPassword = async (req, res) => {
   try {
@@ -267,11 +272,11 @@ const resetPassword = async (req, res) => {
       });
       return;
     }
-
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     // Update the user's password and reset token fields in the database
     const updatePasswordQuery =
       "UPDATE user SET password = ?, resetToken = NULL, resetTokenExpiration = NULL WHERE email = ?";
-    await pool.query(updatePasswordQuery, [newPassword, email]);
+    await pool.query(updatePasswordQuery, [hashedPassword, email]);
 
     res.json({
       message: "Password reset successful",
@@ -317,11 +322,18 @@ const postProject = async (req, res) => {
       const email = req.data.id;
       const firstName = req.data.firstName;
       const secondName = req.data.secondName;
+      const projectId = bookidgen("Guest-", 14522, 199585);
+      const imageQuery = "SELECT id, image FROM user WHERE email = ?";
+      const [image] = await pool.query(imageQuery, [email]);
+      console.log(image);
+      const profileImage = image[0].image;
+      const userId = image[0].id;
       const insertQuery =
-        "INSERT INTO projects (projectTitle,email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, firstName, secondName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO projects (projectTitle, projectId,email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, firstName, secondName, image, userId) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
       await pool.query(insertQuery, [
         projectTitle,
+        projectId,
         email,
         projectDescription,
         startDate,
@@ -332,6 +344,8 @@ const postProject = async (req, res) => {
         document,
         firstName,
         secondName,
+        profileImage,
+        userId,
       ]);
 
       res
@@ -339,21 +353,73 @@ const postProject = async (req, res) => {
         .json({ message: "Project posted successfully", status: true });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
-      message: "An error occurred while posting the project",
+      message: error.message,
       status: false,
     });
   }
 };
+function getCommentsByProjectId(comments, projectId) {
+  return comments.filter((comment) => comment.projectId === projectId);
+}
 
 const getAllProjects = async (req, res) => {
   try {
-    const selectQuery = "SELECT * FROM projects";
-    const [projects] = await pool.query(selectQuery);
+    const email = req.data.id;
+    const selectQuery = `
+      SELECT * FROM projects
+      WHERE (projectType = 1 OR (projectType = 0 AND email = ?))
+        AND (endDate IS NULL OR endDate >= CURDATE())
+    `;
+    const [projects] = await pool.query(selectQuery, [email]);
+    const studentQuery = `
+    SELECT * FROM studentProject
+    WHERE projectType = 1
+  `;
+    const [studentProjects] = await pool.query(studentQuery, [email]);
 
-    res.status(200).json({ projects, status: true });
+    let data = projects.concat(studentProjects);
+    const query = `
+    SELECT
+      c.id AS commentId,
+      c.text AS commentText,
+      c.createdAt AS createdAt,
+      c.flag AS flag,
+      c.disable AS disable,
+      c.projectId AS projectId,
+      c.firstName As firstName,
+      c.secondName As secondName,
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id', sc.id,
+          'text', sc.text,
+          'createdAt', sc.createdAt,
+          'flag', sc.flag,
+          'disable', sc.disable,
+          'firstName', sc.firstName,
+          'secondName', sc.secondName
+        )
+      ) AS subComments
+    FROM
+      comments c
+    LEFT JOIN
+      subComments sc
+    ON c.id = sc.commentId
+    GROUP BY
+      c.id
+    ORDER BY
+      c.createdAt DESC
+    LIMIT 0, 25
+  `;
+
+    const [comments] = await pool.query(query);
+    data.forEach((element) => {
+      element.comment = getCommentsByProjectId(comments, element.projectId);
+    });
+
+    res.status(200).json({ data: data, status: true });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       message: "An error occurred while fetching projects",
       status: false,
@@ -394,6 +460,477 @@ const getUserDetails = async (req, res) => {
     });
   }
 };
+const postComment = async (req, res) => {
+  try {
+    const { text, projectId } = req.body;
+    if (!text || !projectId) {
+      return res.json({ message: "All fields are required", status: false });
+    }
+    let firstName, secondName;
+    const userEmail = req.data.id;
+    const [userRows] = await pool.execute(
+      "SELECT firstName, secondName FROM user WHERE email = ?",
+      [userEmail]
+    );
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+    firstName = userRows[0].firstName;
+    secondName = userRows[0].secondName;
+    const insertQuery = `
+      INSERT INTO comments (firstName, secondName, text, projectId)
+      VALUES (?, ?, ?, ?)
+    `;
+    await pool.execute(insertQuery, [firstName, secondName, text, projectId]);
+    res
+      .status(201)
+      .json({ message: "Comment added successfully", status: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while adding the comment",
+      status: false,
+    });
+  }
+};
+const postSubComment = async (req, res) => {
+  try {
+    const { text, commentId } = req.body;
+    if (!text || !commentId) {
+      return res
+        .status(400)
+        .json({ message: "All fields are required", status: false });
+    }
+    let firstName, secondName;
+    const userEmail = req.data.id;
+    const [userRows] = await pool.execute(
+      "SELECT firstName, secondName FROM user WHERE email = ?",
+      [userEmail]
+    );
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: "User not found.", status: false });
+    }
+    firstName = userRows[0].firstName;
+    secondName = userRows[0].secondName;
+    const insertQuery = `
+      INSERT INTO subComments (firstName, secondName, text, commentId)
+      VALUES (?, ?, ?, ?)
+    `;
+    await pool.execute(insertQuery, [firstName, secondName, text, commentId]);
+    res
+      .status(201)
+      .json({ message: "Sub-comment added successfully", status: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while adding the sub-comment",
+      status: false,
+    });
+  }
+};
+
+const flagComment = async (req, res) => {
+  const { commentId, flag } = req.body;
+  if (flag === undefined) {
+    return res
+      .status(400)
+      .json({ message: "flag value is required", status: false });
+  }
+  if (typeof flag !== "boolean") {
+    return res
+      .status(400)
+      .json({ message: "flag value must be a boolean", status: false });
+  }
+  if (!commentId) {
+    return res
+      .status(400)
+      .json({ message: "Comment ID is required", status: false });
+  }
+  try {
+    const selectQuery = "SELECT flag FROM comments WHERE id = ?";
+    const [rows] = await pool.query(selectQuery, [commentId]);
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Comment not found", status: false });
+    }
+    const existingDisableStatus = rows[0].flag;
+    if (existingDisableStatus == flag) {
+      const action = flag ? "flagged true" : "flagged false";
+      return res
+        .status(200)
+        .json({ message: `Comment is already ${action}`, status: false });
+    }
+    const updateQuery = "UPDATE comments SET flag = ? WHERE id = ?";
+    await pool.query(updateQuery, [flag, commentId]);
+    const action = flag ? "flagged" : "flag removed";
+    res
+      .status(200)
+      .json({ message: `Comment ${action} successfully`, status: true });
+  } catch (error) {
+    console.error("Error toggling comment status:", error);
+    res.status(500).json({
+      message: "An error occurred while toggling the comment status",
+      status: false,
+    });
+  }
+};
+
+const flagSubComment = async (req, res) => {
+  const { commentId, flag } = req.body;
+  if (flag === undefined) {
+    return res
+      .status(400)
+      .json({ message: "flag value is required", status: false });
+  }
+  if (typeof flag !== "boolean") {
+    return res
+      .status(400)
+      .json({ message: "flag value must be a boolean", status: false });
+  }
+  if (!commentId) {
+    return res
+      .status(400)
+      .json({ message: "Comment ID is required", status: false });
+  }
+  try {
+    const selectQuery = "SELECT flag FROM subComments WHERE id = ?";
+    const [rows] = await pool.query(selectQuery, [commentId]);
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Comment not found", status: false });
+    }
+    const existingDisableStatus = rows[0].flag;
+    if (existingDisableStatus == flag) {
+      const action = flag ? "flagged true" : "flagged false";
+      return res
+        .status(200)
+        .json({ message: `Comment is already ${action}`, status: false });
+    }
+    const updateQuery = "UPDATE subComments SET flag = ? WHERE id = ?";
+    await pool.query(updateQuery, [flag, commentId]);
+    const action = flag ? "flagged" : "flag removed";
+    res
+      .status(200)
+      .json({ message: `Comment ${action} successfully`, status: true });
+  } catch (error) {
+    console.error("Error toggling comment status:", error);
+    res.status(500).json({
+      message: "An error occurred while toggling the comment status",
+      status: false,
+    });
+  }
+};
+const uploadImage = async (req, res) => {
+  try {
+    const email = req.data.id;
+    const { image } = req.body;
+    if (!image) {
+      res.json({ message: "No image data provided", status: false });
+      return;
+    }
+    const checkGuestQuery = "SELECT * FROM user WHERE email = ?";
+    const [existingGuest] = await pool.query(checkGuestQuery, [email]);
+    if (existingGuest.length === 0) {
+      res.json({ message: "Guest does not exist", status: false });
+      return;
+    }
+    const updateImageQuery = "UPDATE user SET image = ? WHERE email = ?";
+    await pool.query(updateImageQuery, [image, email]);
+    const updateProjectsImageQuery = `
+    UPDATE projects
+    SET image = ?
+    WHERE email = ?
+    `;
+    const [result] = await pool.query(updateProjectsImageQuery, [image, email]);
+    console.log(result);
+    res.json({ message: "Image updated successfully", status: true });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      message: "An error occurred during image upload",
+      status: false,
+    });
+  }
+};
+const postRequest = async (req, res) => {
+  try {
+    const {
+      projectId,
+      projectTitle,
+      projectEmail,
+      firstName,
+      secondName,
+      email,
+      contact,
+      experience,
+      skill,
+      document,
+    } = req.body;
+    if (
+      !projectId ||
+      !projectTitle ||
+      !projectEmail ||
+      !firstName ||
+      !secondName ||
+      !email ||
+      !contact ||
+      !experience ||
+      !skill ||
+      !document
+    ) {
+      return res
+        .status(400)
+        .json({ message: "All fields are mandatory", status: false });
+    }
+    const insertQuery = `
+      INSERT INTO request (projectId, projectTitle,projectEmail, firstName, secondName, email, contact, experience, skill, document)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    await pool.query(insertQuery, [
+      projectId,
+      projectTitle,
+      projectEmail,
+      firstName,
+      secondName,
+      email,
+      contact,
+      experience,
+      skill,
+      document,
+    ]);
+    res
+      .status(200)
+      .json({ message: "Request added successfully", status: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while adding the request",
+      status: false,
+    });
+  }
+};
+
+const getRequst = async (req, res) => {
+  try {
+    const email = req.data.id;
+    const selectQuery = `
+      SELECT * FROM request WHERE projectEmail = ?
+    `;
+    const [result] = await pool.query(selectQuery, [email]);
+    res.status(200).json({
+      data: result,
+      message: "Requests retrieved successfully",
+      status: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while fetching requests",
+      status: false,
+    });
+  }
+};
+const flagUser = async (req, res) => {
+  try {
+    const { userId, email, flag } = req.body;
+    const checkUserQuery = "SELECT * FROM user WHERE id = ? AND email = ?";
+    const [existingUser] = await pool.query(checkUserQuery, [userId, email]);
+    if (existingUser.length > 0) {
+      const updateUserQuery =
+        "UPDATE user SET flag = ? WHERE id = ? AND email = ?";
+      await pool.query(updateUserQuery, [flag, userId, email]);
+    } else {
+      const checkStudentQuery =
+        "SELECT * FROM student WHERE id = ? AND email = ?";
+      const [existingStudent] = await pool.query(checkStudentQuery, [
+        userId,
+        email,
+      ]);
+      if (existingStudent.length > 0) {
+        const updateStudentQuery =
+          "UPDATE student SET flag = ? WHERE id = ? AND email = ?";
+        await pool.query(updateStudentQuery, [flag, userId, email]);
+      } else {
+        return res
+          .status(404)
+          .json({ message: "User or student not found", status: false });
+      }
+    }
+    return res
+      .status(200)
+      .json({ message: "User or student flaged successfully", status: true });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+const getSingleUserProject = async (req, res) => {
+  try {
+    const { userId, email } = req.body;
+    const selectQuery = `
+    SELECT * FROM studentProject
+    WHERE (projectType = 1 AND email = ? AND userId = ?)
+      AND (endDate IS NULL OR endDate >= CURDATE())
+  `;
+    const [projects] = await pool.query(selectQuery, [email, userId]);
+    const studentQuery = `
+    SELECT * FROM projects
+    WHERE (projectType = 1 AND email = ? AND userId = ?)
+      AND (endDate IS NULL OR endDate >= CURDATE())
+  `;
+    const [studentProjects] = await pool.query(studentQuery, [email, userId]);
+
+    let data = projects.concat(studentProjects);
+    res.status(200).json({ data: data, status: true });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      message: "An error occurred while fetching projects",
+      status: false,
+    });
+  }
+};
+
+const updateRequestStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    // Check if status is valid
+    const validStatuses = ["PENDING", "APPROVED", "REJECTED"];
+    if (!validStatuses.includes(status)) {
+      res.status(400).json({
+        message:
+          "Invalid status. Allowed values are 'PENDING', 'APPROVED', or 'REJECTED'.",
+        status: false,
+      });
+      return;
+    }
+
+    if (!id) {
+      res.status(400).json({
+        message: "Request ID is required",
+        status: false,
+      });
+      return;
+    }
+
+    const checkRequestQuery = `
+      SELECT * FROM request
+      WHERE id = ?`;
+    const [requests] = await pool.query(checkRequestQuery, [id]);
+
+    if (requests.length > 0) {
+      const updateRequestQuery = `
+        UPDATE request
+        SET status = ?
+        WHERE id = ?`;
+      await pool.query(updateRequestQuery, [status, id]);
+    } else {
+      res.status(404).json({
+        message: "Request not found",
+        status: false,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Request status updated successfully",
+      status: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "An error occurred while updating request status",
+      status: false,
+    });
+  }
+};
+const flagProject = async (req, res) => {
+  try {
+    const { projectId, flag } = req.body;
+    if (!projectId || flag !== undefined) {
+      return res
+        .status(400)
+        .json({ message: "Project ID and flag are required", status: false });
+    }
+    const checkProjectQuery = "SELECT * FROM projects WHERE projectId = ?";
+    const [existingProject] = await pool.query(checkProjectQuery, [projectId]);
+    if (existingProject.length > 0) {
+      const updateProjectQuery =
+        "UPDATE projects SET flag = ? WHERE projectId = ?";
+      await pool.query(updateProjectQuery, [flag, projectId]);
+    } else {
+      const checkStudentProjectQuery =
+        "SELECT * FROM studentProject WHERE projectId = ?";
+      const [existingStudentProject] = await pool.query(
+        checkStudentProjectQuery,
+        [projectId]
+      );
+
+      if (existingStudentProject.length > 0) {
+        const updateStudentProjectQuery =
+          "UPDATE studentProject SET flag = ? WHERE projectId = ?";
+        await pool.query(updateStudentProjectQuery, [flag, projectId]);
+      } else {
+        return res
+          .status(404)
+          .json({ message: "Project not found", status: false });
+      }
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Project flagged successfully", status: true });
+  } catch (error) {
+    return res.status(500).json({ message: error.message, status: false });
+  }
+};
+const disableProject = async (req, res) => {
+  try {
+    const { projectId, disable } = req.body;
+    if (!projectId || disable === undefined) {
+      return res.status(400).json({
+        message: "Project ID and disable flag are required",
+        status: false,
+      });
+    }
+    const checkProjectQuery = "SELECT * FROM projects WHERE projectId = ?";
+    const [existingProject] = await pool.query(checkProjectQuery, [projectId]);
+    if (existingProject.length > 0) {
+      const disableValue = disable ? 1 : 0;
+      const disableProjectQuery =
+        "UPDATE projects SET disable = ? WHERE projectId = ?";
+      await pool.query(disableProjectQuery, [disableValue, projectId]);
+    } else {
+      const checkStudentProjectQuery =
+        "SELECT * FROM studentProject WHERE projectId = ?";
+      const [existingStudentProject] = await pool.query(
+        checkStudentProjectQuery,
+        [projectId]
+      );
+      if (existingStudentProject.length > 0) {
+        const disableValue = disable ? 1 : 0;
+        const disableStudentProjectQuery =
+          "UPDATE studentProject SET disable = ? WHERE projectId = ?";
+        await pool.query(disableStudentProjectQuery, [disableValue, projectId]);
+      } else {
+        return res
+          .status(404)
+          .json({ message: "Project not found", status: false });
+      }
+    }
+
+    return res.status(200).json({
+      message: "Project disabled status updated successfully",
+      status: true,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message, status: false });
+  }
+};
 
 module.exports = {
   signup,
@@ -404,4 +941,16 @@ module.exports = {
   getAllProjects,
   sendOtp,
   getUserDetails,
+  postComment,
+  postSubComment,
+  flagComment,
+  flagSubComment,
+  uploadImage,
+  postRequest,
+  getRequst,
+  flagUser,
+  getSingleUserProject,
+  updateRequestStatus,
+  flagProject,
+  disableProject,
 };

@@ -3,13 +3,13 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { fetchApi } from "../../Utils/Request";
 
-const StatusButton = ({ show, handleClose, projectId, GetPro }) => {
+const FlagButton = ({ show, handleClose, projectId, GetPro, disable }) => {
   const acceptReject = async (arg) => {
     let payload = {
-      projectId: projectId,
-      status: arg,
+      commentId: projectId,
+      disable: arg,
     };
-    let response = await fetchApi("/admin/approve", payload, "POST");
+    let response = await fetchApi("/admin/disable/comment", payload, "POST");
     if (response.status) {
       GetPro();
       handleClose();
@@ -42,21 +42,12 @@ const StatusButton = ({ show, handleClose, projectId, GetPro }) => {
             >
               <button
                 type="button"
-                className="btn btn-success"
+                className={disable ? "btn btn-success" : "btn btn-danger"}
                 onClick={() => {
-                  acceptReject("ACCEPTED");
+                  acceptReject(disable ? false : true);
                 }}
               >
-                Accept
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => {
-                  acceptReject("REJECTED");
-                }}
-              >
-                Reject
+                {!disable ? "Disable Comment" : "Enable Comment"}
               </button>
             </div>
           </div>
@@ -67,4 +58,4 @@ const StatusButton = ({ show, handleClose, projectId, GetPro }) => {
   );
 };
 
-export default StatusButton;
+export default FlagButton;

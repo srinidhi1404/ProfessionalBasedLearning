@@ -26,7 +26,9 @@ const ForgotPasswordForm = ({
   const [messageApi, contextHolder] = message.useMessage();
 
   const [show1, setShow] = useState(false);
-  const handleClose1 = () => setShow(false);
+  const handleClose1 = (data) => {
+    setShow(data);
+  };
   const handleShow1 = () => {
     setShow(true);
   };
@@ -67,6 +69,7 @@ const ForgotPasswordForm = ({
       console.log("api call");
       let response = await fetchApi("/api/forgotpassword", formData, "POST");
       if (response.status === true) {
+
         messageApi.open({
           type: "success",
           content: response.message,
@@ -75,11 +78,14 @@ const ForgotPasswordForm = ({
             right: 0,
             top: 10,
           },
+          
         });
+  
         setShowResetPassword(true);
         setTimeout(() => {
           handleShow1();
         }, 1000);
+     
       } else {
         messageApi.open({
           type: "error",
