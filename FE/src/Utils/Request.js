@@ -12,6 +12,16 @@ export const fetchApi = async (endpoint, body, method) => {
   };
   try {
     const response = await fetch(`${baseUrl}${endpoint}`, data);
+  
+
+if (!response.ok) {
+  console.error("Request failed with status:", response.status);
+  // Handle the error
+} else {
+  const data = await response.json(); // Parse the response data
+  // Handle the data
+}
+
     const result = await response.json();
 
     return result;
