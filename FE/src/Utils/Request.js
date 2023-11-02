@@ -1,7 +1,7 @@
 export const fetchApi = async (endpoint, body, method) => {
   let auth = localStorage.getItem("token");
 
-  let baseUrl = "http://localhost:3000";
+  let baseUrl = "https://professional-based-learning.vercel.app/";
   let data = {
     method: method, 
     headers: {
