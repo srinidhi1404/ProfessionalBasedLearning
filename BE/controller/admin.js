@@ -359,6 +359,31 @@ const getUsersWithFlag = async (req, res) => {
     });
   }
 };
+const getAllUsers = async (req, res) => {
+  try {
+    const selectUserQuery = `
+      SELECT id, email, firstName, secondName, image, flag, disable
+      FROM user
+    `;
+    const [users] = await pool.query(selectUserQuery);
+
+    const selectStudentQuery = `
+      SELECT id, email, firstName, secondName, image, flag, disable
+      FROM student
+    `;
+    const [students] = await pool.query(selectStudentQuery);
+
+    const data = users.concat(students);
+
+    res.status(200).json({ data, status: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: "An error occurred while fetching users",
+      status: false,
+    });
+  }
+};
 
 module.exports = {
   signup,
@@ -370,4 +395,5 @@ module.exports = {
   getAllComments,
   getUsersWithFlag,
   disableUser,
+  getAllUsers,
 };

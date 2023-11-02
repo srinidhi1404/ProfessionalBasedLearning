@@ -7,7 +7,6 @@ const Table = ({ data }) => {
     <table className="tableBody">
       <thead>
         <tr>
-          <th className="p-3">#</th>
           <th>Project Title</th>
           <th>Description</th>
           <th>Start Date</th>
@@ -17,7 +16,6 @@ const Table = ({ data }) => {
       <tbody>
         {data?.map((item, index) => (
           <tr key={index}>
-            <td className="p-2">{index + 1}</td>
             <td
               style={{
                 whiteSpace: "nowrap",

@@ -2,27 +2,32 @@ import React, { useEffect, useState } from "react";
 import "./userProfile.css";
 import axios from "axios";
 import Table from "../Table/table";
-import { Button } from "bootstrap";
-
+import Loader from "../Loader/Loader";
+import defaultImageLink from "../../asset/image/defaultProfile.jpeg";
 const UserProfile = () => {
   const userApi = "http://localhost:3000/student/student-details";
   const guestApi = "http://localhost:3000/api/user-details";
   const token = localStorage.getItem("token");
   const [GuestUserDetail, SetGuestUserDetail] = useState("");
   const [UserDetail, SetUserDetail] = useState("");
-  console.log("UserDetail", UserDetail);
-
+  const [ShowSave, setShowSave] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [pdfFile, setPdfFile] = useState("");
-  console.log("pdfFile", pdfFile);
   const [image, setImage] = useState("");
+  const [mainLoader, setMainLoader] = useState(false);
   const [values, setValues] = useState({
     document: "",
   });
 
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const userType = localStorage.getItem("userType");
   useEffect(() => {
+    getDate();
+  }, []);
+
+  const getDate = () => {
     if (userType === "guestUser") {
+      setMainLoader(true);
       axios
         .get(guestApi, {
           headers: {
@@ -30,12 +35,15 @@ const UserProfile = () => {
           },
         })
         .then((response) => {
-          console.log("response.data", response.data);
           SetGuestUserDetail(response.data);
-          setImage(response.data.data.projects[0].image);
+          setImage(response.data.data.user.image);
+          setMainLoader(false);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setMainLoader(false);
+        });
     } else if (userType === "student") {
+      setMainLoader(true);
       axios
         .get(userApi, {
           headers: {
@@ -43,21 +51,17 @@ const UserProfile = () => {
           },
         })
         .then((response) => {
-          console.log("response.data", response.data.data.projects[0].image);
           SetUserDetail(response.data);
-          setImage(response.data.data.projects[0].image);
+          setImage(response.data.data.user.image);
+          setMainLoader(false);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setMainLoader(false);
+        });
     }
-  }, []);
-
-  const handleImageClick = () => {
-    document.getElementById("upload").click(); // Trigger file input click when the image is clicked
   };
-
-  const handlePicUpload = async () => {
+  const handlePicUploadGuest = async () => {
     try {
-      // Include your token in the headers
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -65,30 +69,18 @@ const UserProfile = () => {
         },
       };
 
-      // Upload the image and get the URL
       const response = await axios.post(
-        "http://localhost:3000/student/add/image",
-        { image: pdfFile },
+        "http://localhost:3000/api/add/image",
+        { image: selectedImage },
         config
       );
 
       if (response.data.status) {
-        // Update your PDF state with the image URL
-        setValues({
-          ...values,
-          document: response.data.url,
-        });
-
-        // Reload the page to see the changes
-        window.location.reload();
+        getDate();
+        setShowSave(false)
       } else {
-        // Handle the case when image upload fails
-        // You can show an error message or take appropriate action
       }
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle errors here
-    }
+    } catch (error) { }
   };
 
   const uploadImage = async (e) => {
@@ -102,102 +94,162 @@ const UserProfile = () => {
       );
 
       if (response.data.status) {
-        setPdfFile(response.data.url);
-
+        setSelectedImage(response.data.url);
         setValues({
           ...values,
           document: response.data.secureUrl,
         });
+
         setLoading(false);
+        setShowSave(true);
       } else {
         setLoading(false);
-        // toast.error('Failed to   upload document');
       }
     } catch (error) {
-      console.error("Error:", error);
       setLoading(false);
-      // toast.error('An error occurred while uploading the document');
     }
   };
 
+  const handlePicUpload = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+      };
+
+      const response = await axios.post(
+        "http://localhost:3000/student/add/image",
+        { image: selectedImage },
+        config
+      );
+
+      if (response.data.status) {
+        getDate();
+
+        // window.location.reload();
+      }
+    } catch (error) { }
+  };
+  const handleImageClick = () => {
+    document.getElementById("upload").click();
+  };
+  const handleCall = () => {
+    window.location.href = `tel:${userData.data?.user?.contact}`;
+  };
+
+  const handleMail = () => {
+    window.location.href = `mailto:${userData.data?.user.email}`;
+  };
   const userData =
     userType === "student"
       ? UserDetail
       : userType === "guestUser"
-      ? GuestUserDetail
-      : null;
-
+        ? GuestUserDetail
+        : null;
+        console.log(userData.data?.user , "wefcwe") 
   return (
     <>
-      <div className="profileDiv1">
-        <h1 className="profileDiv3">User Profile</h1>
-        <div className="profileDiv4">
-          {/* <div className="profileDiv5" onClick={handleImageClick}>
-            <img
-              src={image}
-              alt="logo"
-            />
-          </div> */}
-          {/* Rest of your code */}
-          {/* <div style ={{display:"flex"}}>
-          <input type="file" accept="jpg" id="upload" hidden onChange={(e) => uploadImage(e)} />
-          <label for="upload" className="fileupload">{loading ? "Loading" : "Choose file"} </label>
-          <button  className="fileupload" onClick={handlePicUpload}>Submit</button>
-          </div> */}
-          <div className="profileDiv6">
-            {userData ? (
-              <>
-                <h2
-                  className="AlignItems"
-                  style={{ textAlign: "center", marginBottom: "10px" }}
-                >
-                  {userData.data?.user.firstName}
-                  {userData.data?.user.secondName}
-                </h2>
-                <div className="flex justify-center gap-4 flex-wrap my-5">
-                  <div className="py-2 px-3 border rounded-full bg-slate-50">
-                    <span>Education :</span>
+      {mainLoader ? (
+        <div>
+          <Loader />{" "}
+        </div>
+      ) : (
+        <div className="profileDiv1">
+          <div className="userprofileBg">
+          </div>
+          <div className="profile-con">
+            <div className="profileDiv5" onClick={handleImageClick}>
+              {loading ? (
+                <div className="imgloading">loading...</div>
+              ) : (
+                <img src={selectedImage || image || defaultImageLink} alt="logo" />
+              )}
+            </div>
+
+            <div style={{ display: "flex" }}>
+              <input
+                type="file"
+                accept="jpg"
+                id="upload"
+                hidden
+                onChange={(e) => uploadImage(e)}
+              />
+
+              {userType === "guestUser" && ShowSave ? (
+                <button className="fileupload" onClick={handlePicUploadGuest}>
+                  Save
+                </button>
+              ) : userType === "student" && ShowSave ? (
+                <button className="fileupload" onClick={handlePicUpload}>
+                  Save
+                </button>
+              ) : (
+                <div className="dummyDiv"></div>
+              )}
+            </div>
+          </div>
+          <div className="Profile-card">
+            <div className="profileDiv6">
+              {userData ? (
+                <>
+                  <h2
+                    className="AlignItems"
+                    style={{ textAlign: "center", marginBottom: "10px" }}
+                  >
+                    {userData.data?.user.firstName}
+
+                    {userData.data?.user.secondName}
+                  </h2>
+                  <div className="button-container">
+                    {
+                      userData.data?.user.contact ?   <button className="styled-button" onClick={handleCall}>
+                      <span className="call-icon"> {userData.data?.user.contact}</span>
+                      
+                    </button> :""
+                    }
+                  
+                    <button className="styled-button" onClick={handleMail}>
+                      <span className="mail-icon">Mail Me</span>
+                    </button>
                   </div>
-                  <div className="py-2 px-3 border rounded-full bg-slate-50">
-                    <span>Email: {userData.data?.user.email}</span>
+                  <div className="button-container">
+                    <h3>{userData.data?.user?.education}</h3>
                   </div>
-                  <div className="py-2 px-3 border rounded-full bg-slate-50">
-                    <span>
-                      Projects Posted: {userData.data?.projects?.length}
-                    </span>
+                  <div className="button-containerNew">
+                  <p>{userData.data?.user?.intro}</p>
                   </div>
-                  <div className="py-2 px-3 border rounded-full bg-slate-50">
-                    <span>Intro:</span>
-                  </div>
-                  <div className="py-2 px-3 border rounded-full bg-slate-50">
-                    <span>Contact Details: </span>
-                  </div>
+                </>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+          <div className="profileDiv4">
+
+
+            {userData?.data?.projects.length > 0 ? (
+              <div className="profileDiv7">
+                <h2 className="project-posted-heading">Project Posted {userData.data?.projects?.length}</h2>
+                <div className="profileDiv8">
+                  <Table
+                    data={
+                      userType === "student"
+                        ? UserDetail.data?.projects
+                        : GuestUserDetail.data?.projects
+                    }
+                  />
                 </div>
-              </>
+              </div>
             ) : (
-              ""
+              <div className="text-center profileDiv7 my-3">
+                <p className="text-xl font-semibold">No projects posted yet</p>
+              </div>
             )}
           </div>
-          {userData?.data?.projects.length > 0 ? (
-            <div className="profileDiv7">
-              <h2 className="mb-4">Project Posted</h2>
-              <div className="profileDiv8">
-                <Table
-                  data={
-                    userType === "student"
-                      ? UserDetail.data?.projects
-                      : GuestUserDetail.data?.projects
-                  }
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="text-center profileDiv7 my-3">
-              <p className="text-xl font-semibold">No projects posted yet</p>
-            </div>
-          )}
         </div>
-      </div>
+      )}
     </>
   );
 };

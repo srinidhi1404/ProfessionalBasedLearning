@@ -5,7 +5,7 @@ import { BsFlagFill } from "react-icons/bs";
 import { GrClose } from "react-icons/gr";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import PropTypes from "prop-types"; // Import PropTypes for validation
+import PropTypes from "prop-types";
 import "./ProjectComments.css";
 
 const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
@@ -19,9 +19,8 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
   const usertoken = localStorage.getItem("token");
   const usertype = localStorage.getItem("userType");
   const [openReplyInput, setOpenReplyInput] = useState(null);
-  const totalComments = dummyComments?.filter((b) => b.disable !== 1).length;
+  const totalComments = (dummyComments || []).filter((b) => b.disable !== 1).length;
   const [commentOwnerFirstName, setCommentOwnerFirstName] = useState("");
-
   let postParentCommentURL = "http://localhost:3000/api/add/comment";
   let postSubCommentURL = "http://localhost:3000/api/add/sub-comment";
   let flagComment = "http://localhost:3000/api/flag/comment";
@@ -77,18 +76,21 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
         headers,
       })
       .then((response) => {
-        sendDataToParent((prevComments) => [...prevComments, response.data]);
-        setLastCommentIndex(dummyComments.length);
+        // If dummyComments is not an array, initialize it as an array
+        const updatedComments = Array.isArray(dummyComments) ? [...dummyComments] : [];
+        updatedComments.push(response.data);
+        sendDataToParent(updatedComments);
+        setLastCommentIndex(updatedComments.length);
         setInputValue("");
       })
       .catch((error) => {
-        console.error("Error:", error);
+        // Handle error
       });
   };
 
   const postSubComment = (commentId) => {
     const subCommentData = {
-      text: subInputValue,
+      text: `@${commentOwnerFirstName} ${subInputValue}`,
       commentId,
     };
 
@@ -97,14 +99,16 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
         headers,
       })
       .then((response) => {
-        sendDataToParent((prevComments) => [...prevComments, response.data]);
+        // If dummyComments is not an array, initialize it as an array
+        const updatedComments = Array.isArray(dummyComments) ? [...dummyComments] : [];
+        updatedComments.push(response.data);
+        sendDataToParent(updatedComments);
         setSubInputValue("");
       })
       .catch((error) => {
-        console.error("Error:", error);
+        // Handle error
       });
   };
-
   const flagCommentfun = (id, status, placement) => {
     const flagCommentData = {
       commentId: id,
@@ -137,7 +141,6 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
       });
   };
 
@@ -170,23 +173,16 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
         setInputValue("");
       })
       .catch((error) => {
-        console.error("Error:", error);
       });
   };
+
+
 
   const maxCommentsToShow = 3;
   const showViewAllButton = totalComments > maxCommentsToShow;
   const [viewRepliesForComment, setViewRepliesForComment] = useState({});
-
   const [showflagtoast, setshowflagtoast] = useState(false);
   const [showerrortoast, setshowerrortoast] = useState(false);
-
-  // const toggleRepliesForComment = (commentId) => {
-  //   setViewRepliesForComment((prev) => ({
-  //     ...prev,
-  //     [commentId]: !prev[commentId],
-  //   }));
-  // };
 
   const toggleRepliesForComment = (commentId) => {
     const comment = dummyComments.find(
@@ -248,7 +244,16 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
                           {comment.firstName}
                         </h4>
                         <div>
-                          <h6>{comment.commentText}</h6>
+                          <h6>
+                            {comment.commentText.split(' ').map((word, index) => (
+                              word.startsWith('@') ? (
+                                <span key={index} style={{ color: 'green' }}>{word}</span>
+                              ) : (
+                                <span key={index}>{word}</span>
+                              )
+                            ))}
+                          </h6>
+
                           <div className="flagreply">
                             <button
                               className="parent-reply"
@@ -269,7 +274,11 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
                             >
                               <BsFlagFill
                                 className="hover:text-red-600"
-                                style={{ color: "red" }}
+                                style={{
+                                  color: comment.flag ? "red" : "grey",
+                                  cursor: "pointer",
+                                }}
+
                               />
                             </span>
                           </div>
@@ -308,7 +317,16 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
                                       <h4 className="comment-firstname">
                                         {subComment.firstName}
                                       </h4>
-                                      <h6>{subComment.text}</h6>
+                            
+                                      <h6>
+                                        {subComment.text.split(' ').map((word, index) => (
+                                          word.startsWith('@') ? (
+                                            <span key={index} style={{ color: 'green' , fontSize:"15px" }}>{word}</span>
+                                          ) : (
+                                            <span key={index} style={{marginLeft:"5px"}}>{word}</span>
+                                          )
+                                        ))}
+                                      </h6>
                                       <div className="flagreply">
                                         <button
                                           className="parent-reply"
@@ -332,7 +350,12 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
                                         >
                                           <BsFlagFill
                                             className="hover:text-red-600"
-                                            style={{ color: "red" }}
+                                            style={{
+                                              color: subComment.flag
+                                                ? "red"
+                                                : "grey",
+                                              cursor: "pointer",
+                                            }}
                                           />
                                         </span>
                                       </div>
@@ -432,7 +455,7 @@ ProjectComments.propTypes = {
   setState: PropTypes.func.isRequired,
   showReplyInput: PropTypes.any.isRequired,
   toggleRepliesnew: PropTypes.func.isRequired,
-  dummyComments: PropTypes.array.isRequired,
+  dummyComments: PropTypes.array.isRequired, // Make sure it's always an array
   sendDataToParent: PropTypes.func.isRequired,
 };
 

@@ -5,7 +5,6 @@ const Sidebar = () => {
     { projectId: 1, projectTitle: 'Project 1' },
     { projectId: 2, projectTitle: 'Project 2' },
     { projectId: 3, projectTitle: 'Project 3' },
-    // Add more project objects as needed
   ];
 
   return (

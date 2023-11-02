@@ -18,10 +18,13 @@ router.post("/flag/sub-comment", auth, application.flagSubComment);
 router.post("/add/image", auth, application.uploadImage);
 router.post("/post/request", application.postRequest);
 router.get("/get/request", auth, application.getRequst);
-router.post("/flag/user", auth, application.flagUser);
+router.post("/flag/user", application.flagUser);
 router.post("/user/project", auth, application.getSingleUserProject);
 router.post("/update/request", auth, application.updateRequestStatus);
-router.post("/flag/project", auth, application.flagProject);
+router.post("/flag/project", application.flagProject);
 router.post("/disable/project", auth, application.disableProject);
+router.post("/edit/project", auth, application.editProject);
+router.post("/delete/project", auth, application.deleteProject);
+router.post("/user/detail", application.getUserDetail);
 
 module.exports = router;

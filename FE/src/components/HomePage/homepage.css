@@ -1,7 +1,11 @@
 .maindiv1 {
     background-image: url(../../asset/image/bg_img.jpg);
     background-size: cover;
-    height: 100vh;
+    min-height: 100vh;
+}
+.loginbtncon{
+    display: flex;
+    min-height: 87vh;
 }
 
 .footer {
@@ -9,35 +13,30 @@
     background-color: black;
 }
 
-.loginbtncon {
-    height: 80vh;
-
-}
 
 .left_lion img {
-    height: 668px;
+width: 100%;
+height: 100%;
+object-fit: cover;
 }
 
-.loginbtncon {
-    display: flex;
-    justify-content: center;
-}
+
 
 .left_lion {
-    width: 40%;
+    height: 87vh;
+    width: 30%;
 }
 
 .right-btns {
-    width: 40%;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 70%;
 }
 
 .btns-wrap {
     display: flex;
     flex-direction: column;
-    margin-top: 120px;
 }
 
 *,
@@ -97,3 +96,19 @@
 .mybtn.btn-background-slide:focus {
     color: #006747;
 }
+
+
+
+.btn-background-slide::after{
+    position: absolute;
+    margin-top: 3px;
+    right: 20px;
+    content: '';
+    background-image: url(../../asset/image/arrow.png);
+    height: 17px;
+    width: 17px;
+    background-size: 100% 100%;
+    transform: rotate(-90deg);
+    color: #006747 !important;
+  }
+  

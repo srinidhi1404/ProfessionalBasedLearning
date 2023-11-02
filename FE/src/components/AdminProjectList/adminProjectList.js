@@ -5,106 +5,187 @@ import TablePagination from "@mui/material/TablePagination";
 import StatusButton from "../StatusButton/statusButton";
 import { fetchApi } from "../../Utils/Request";
 import { useNavigate } from "react-router-dom";
+import SortImg from "../../asset/image/sort.png";
+import Loader from "../Loader/Loader";
+import moment from "moment";
 import "./adminProjectList.css";
+
 const AdminProjectList = () => {
   const [show, setShow] = useState(false);
-  const [details, setDetails] = useState([]);
-  const [page, setPage] = useState(0); // Changed from React.useState(2)
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [activeProjects, setActiveProjects] = useState([]);
+  const [expiredProjects, setExpiredProjects] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const [projectId, setProjectId] = useState("");
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [searchText, setSearchText] = useState("");
+  const [mainLoader, setMainLoader] = useState(false)
+  const [activeTab, setActiveTab] = useState("active"); 
+  
   const navigate = useNavigate();
-
-  // const obj = {
-
-  //     projectId:projectId ,
-  //     status:''
-
-  // }
-
+  const [filteredActiveProjects, setFilteredActiveProjects] = useState([]); 
+  const [filteredExpiredProjects, setFilteredExpiredProjects] = useState([]); 
   useEffect(() => {
     GetPro();
   }, []);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  useEffect(() => {
+    handleSearch();
+  }, [searchText]);
 
   const GetPro = async () => {
+    setMainLoader(true)
     let response = await fetchApi("/admin/all/project", "", "GET");
     if (response.status) {
-      setDetails(response?.data);
+      const currentDate = moment(); 
+
+      const activeProjects = response.data.filter(
+        (item) =>
+          item.status !== "REJECTED" && moment(item.endDate) >= currentDate
+      );
+      const expiredProjects = response.data.filter(
+        (item) => moment(item.endDate) < currentDate
+      );
+
+      setActiveProjects(activeProjects);
+      setExpiredProjects(expiredProjects);
+
+      const sortedProjects1 = activeProjects.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+      const sortedProjects2 = expiredProjects.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+      setFilteredActiveProjects(sortedProjects1);
+      setFilteredExpiredProjects(sortedProjects2);
+      setMainLoader(false)
     }
   };
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const handleSort = () => {
+    if (activeTab === "active") {
+      setFilteredActiveProjects([...filteredActiveProjects].reverse());
+    } else {
+      setFilteredExpiredProjects([...filteredExpiredProjects].reverse());
+    }
+  };
+
+  const handleSearch = () => {
+    if (activeTab === "active") {
+      const filteredData = activeProjects.filter((item) =>
+        item.projectTitle.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setFilteredActiveProjects(filteredData);
+    } else {
+      const filteredData = expiredProjects.filter((item) =>
+        item.projectTitle.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setFilteredExpiredProjects(filteredData);
+    }
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSearchText(""); 
+    if (tab === "active") {
+      setFilteredActiveProjects(activeProjects); 
+    } else {
+      setFilteredExpiredProjects(expiredProjects); 
+    }
+  };
+
   const qwerty = (item) => {
-    // setProjectId(id);
-    // // handleShow()
-    // setShow(true);
     navigate("/viewproject-admin", {
       state: {
         project: item,
       },
     });
   };
-  console.log({ projectId }, "ProjectList");
+  const handleShow = () => {
+    setShow(true); 
+  };
+
   return (
-    <div
-      className=""
-      style={{ justifyContent: "center", alignItems: "center" }}
-    >
-      <h2
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "2%",
-          marginLeft: "40%",
-        }}
-      >
-        Projects List
-      </h2>
-      <div className="pagination-wrap">
-        <div
-          className="tableWrap"
-          style={{
-            width: "80%",
-            justifyContent: "center",
-            alignItems: "center",
-            marginLeft: "10%",
-            boxShadow: " 2px 2px 2px 2px rgba(0,0,0,0.2)",
-            marginTop: "2%",
-          }}
+    <>
+    {
+      mainLoader ? <div><Loader/></div> :     <div className="view-project-prentmin">
+      <div className="search-flex">
+        <h2>Projects List</h2>
+        <div className="search-flex-new">
+          <div className="sort-con">
+            <p onClick={handleSort}>
+              <img src={SortImg} alt="" />
+            </p>
+          </div>
+          <input
+            type="text"
+            placeholder="Search Project"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{
+              color: "black",
+              border: "1px solid #006747",
+              borderRadius: "4px",
+              padding: "8px",
+              width: "370px",
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="tab-buttons">
+        <button
+          onClick={() => handleTabChange("active")}
+          className={activeTab === "active" ? "active-tab" : "normal-tab-btn"}
         >
+          Active Projects
+        </button>
+        <button
+          onClick={() => handleTabChange("expired")}
+          className={activeTab === "expired" ? "active-tab" : "normal-tab-btn"}
+        >
+          Expired Projects
+        </button>
+      </div>
+
+      <div className="pagination-wrap">
+        <div className="tableWrap">
           <table className="table table-hover">
             <thead>
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Authors Name</th>
-                <th scope="col">title</th>
-                <th scope="col">View Status</th>
-                <th scope="col">Approval Status</th>
+                <th scope="col">Title</th>
+                <th scope="col">Status</th>
+                <th scope="col">Approve / Reject</th>
               </tr>
             </thead>
             <tbody>
-              {details
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((a, b) => (
-                  <>
-                    {a.status !== "REJECTED" ? (
+              {activeTab === "active"
+                ? filteredActiveProjects
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((a, b) => (
                       <tr key={b} id={a.projectId}>
                         <th scope="row">{b + 1}</th>
                         <td>{a.firstName}</td>
                         <td>{a.projectTitle}</td>
                         <td>
-                          <div>
+                          {a.status === "ACCEPTED" ? (
+                            <div className="Approved">Approved</div>
+                          ) : a.status === "PENDING" ? (
+                            <div className="PENDING">Pending</div>
+                          ) : (
+                            <div className="Rejected">Rejected</div>
+                          )}
+                        </td>
+                        <td>
+                          <div className="viewbtdisable">
                             <button
                               type="button"
-                              className="btn btn-primary"
+                              className="adminviewbtn"
                               data-toggle="modal"
                               disabled={a.status !== "PENDING"}
                               data-target={`#exampleModal${b}`}
@@ -114,29 +195,50 @@ const AdminProjectList = () => {
                             </button>
                           </div>
                         </td>
+                      </tr>
+                    ))
+                : filteredExpiredProjects
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((a, b) => (
+                      <tr key={b} id={a.projectId}>
+                        <th scope="row">{b + 1}</th>
+                        <td>{a.firstName}</td>
+                        <td>{a.projectTitle}</td>
                         <td>
-                          {a.status === "ACCEPTED" ? (
-                            <div className="Approved">Approved</div>
-                          ) : a.status === "PENDING" ? (
-                            <div className="PENDING">Pending</div>
-                          ) : (
-                            <div className="Rejected">Rejected</div>
-                          )}{" "}
+                          <div className="Expired">Expired</div>
+                        </td>
+                        <td>
+                          <div>
+                            <button
+                              type="button"
+                              className="adminviewbtn"
+                              data-toggle="modal"
+                              disabled={a.status !== "PENDING"}
+                              data-target={`#exampleModal${b}`}
+                              onClick={() => qwerty(a)}
+                            >
+                              View
+                            </button>
+                          </div>
                         </td>
                       </tr>
-                    ) : null}
-                  </>
-                ))}
+                    ))}
             </tbody>
           </table>
           <div>
             <TablePagination
               component="div"
-              count={details.length}
+              count={
+                activeTab === "active"
+                  ? filteredActiveProjects.length
+                  : filteredExpiredProjects.length
+              }
               page={page}
-              onPageChange={handleChangePage}
+              onPageChange={(event, newPage) => setPage(newPage)}
               rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              onRowsPerPageChange={(event) =>
+                setRowsPerPage(parseInt(event.target.value, 10))
+              }
             />
           </div>
           <StatusButton
@@ -149,6 +251,9 @@ const AdminProjectList = () => {
         </div>
       </div>
     </div>
+    }
+    </>
+
   );
 };
 

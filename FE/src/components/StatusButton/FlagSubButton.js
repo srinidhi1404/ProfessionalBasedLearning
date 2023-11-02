@@ -46,7 +46,8 @@ const FlagSubButton = ({ show, handleClose, projectId, GetPro, disable }) => {
             >
               <button
                 type="button"
-                className={disable ? "btn btn-success" : "btn btn-danger"}
+         
+                className={disable ? "btn btn-success btn-sm" : "btn btn-danger btn-sm"}
                 onClick={() => {
                   acceptReject(disable ? false : true);
                 }}

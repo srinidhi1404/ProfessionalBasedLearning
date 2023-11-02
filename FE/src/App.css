@@ -41,3 +41,9 @@
   background-size: cover;
   height: 100vh;
 }
+.px-4{
+  padding-right: 0px !important;
+}
+.closeBtn{
+  color: #282c34 !important;
+}

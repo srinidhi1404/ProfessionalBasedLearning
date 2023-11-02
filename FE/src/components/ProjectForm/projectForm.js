@@ -1,14 +1,12 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./projectForm.css";
 import { fetchApi } from "../../Utils/Request";
-import "./projectForm.css";
 import { useNavigate } from "react-router-dom";
-
+import Select from "react-select";
 import axios from "axios";
-import moment from "moment"; // Import Moment.js
+import moment from "moment";
 import { message } from "antd";
 
 const formDetails = {
@@ -20,7 +18,21 @@ const formDetails = {
   projectSummary: "",
   document: "",
   projectType: "",
+  keywords: [],
 };
+
+const keyWords = [
+  { value: "Machine Learning", label: "Machine Learning" },
+  { value: "Data Science", label: "Data Science" },
+  { value: "Engineering", label: "Engineering" },
+  { value: "Artificial Intelligence", label: "Artificial Intelligence" },
+  { value: "Computer Vision", label: "Computer Vision" },
+  { value: "Algorithms", label: "Algorithms" },
+  { value: "Software Development", label: "Software Development" },
+  { value: "Web Development", label: "Web Development" },
+  { value: "Database Management", label: "Database Management" },
+  { value: "Cybersecurity", label: "Cybersecurity" },
+];
 
 const ProjectForm = () => {
   const navigate = useNavigate();
@@ -32,6 +44,7 @@ const ProjectForm = () => {
   const [fileName, setFileName] = useState("");
   const [imgError, setImageError] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [isStartDateSelected, setIsStartDateSelected] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
     projectTitle: "",
     projectDescription: "",
@@ -49,13 +62,44 @@ const ProjectForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: name === "projectType" ? value === "true" : value,
-    }));
-    // Clear the error message for the corresponding field
+    console.log(name, value);
+
+    if (name === "keywords") {
+      setFormData((prevData) => ({
+        ...prevData,
+        keywords: value,
+      }));
+    } else if (name === "projectType") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: name === "projectType" ? value === "true" : value,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+
     setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  
+    if (name === "startDate") {
+      setIsStartDateSelected(true);
+    }
+  };
+
+  const validateEndDate = () => {
+    if (!isStartDateSelected && formData.endDate) {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        endDate: "Please select a start date first.",
+      }));
+    } else {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        endDate: "",
+      }));
+    }
   };
 
   const uploadImage = async (e) => {
@@ -87,58 +131,18 @@ const ProjectForm = () => {
       hasErrors = true;
     }
 
-    if (formData.projectDescription === "") {
+    if (moment(formData.endDate).isBefore(moment(formData.startDate))) {
       setFieldErrors((prevErrors) => ({
         ...prevErrors,
-        projectDescription: "projectDescription is Required",
+        endDate: "End Date cannot be earlier than Start Date",
       }));
       hasErrors = true;
     }
-    if (formData.startDate === "") {
-      setFieldErrors((prevErrors) => ({
-        ...prevErrors,
-        startDate: "Start Date is Required",
-      }));
-      hasErrors = true;
-    }
-    if (formData.endDate === "") {
-      setFieldErrors((prevErrors) => ({
-        ...prevErrors,
-        endDate: "End Date is Required",
-      }));
-      hasErrors = true;
-    }
-    if (formData.contactNumber === "") {
-      setFieldErrors((prevErrors) => ({
-        ...prevErrors,
-        contactNumber: "Contact is Required",
-      }));
-      hasErrors = true;
-    }
-    if (formData.projectSummary === "") {
-      setFieldErrors((prevErrors) => ({
-        ...prevErrors,
-        projectSummary: "Project Summary is Required",
-      }));
-      hasErrors = true;
-    }
-    if (formData.projectType === "") {
-      setFieldErrors((prevErrors) => ({
-        ...prevErrors,
-        projectType: "Project Type is Required",
-      }));
-      hasErrors = true;
-    }
-    if (pdfFile === "") {
-      setImageError(true);
-      hasErrors = true;
-    } else {
-      setImageError(false);
-    }
+
     if (hasErrors) {
-      // There are errors, do not proceed with form submission
       return;
     }
+
     let userType = localStorage.getItem("userType");
     let payload = { ...formData };
     payload.document = pdfFile;
@@ -149,7 +153,9 @@ const ProjectForm = () => {
           type: "success",
           content: response.message,
         });
-        navigate("/dashboard");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
       } else {
         messageApi.open({
           type: "error",
@@ -180,6 +186,13 @@ const ProjectForm = () => {
   const togglePasswordVisibility1 = () => {
     setPasswordVisible1(!passwordVisible1);
   };
+  function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const day = today.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
 
   return (
     <>
@@ -250,6 +263,7 @@ const ProjectForm = () => {
                     onChange={(e) => {
                       handleChange(e);
                     }}
+                    min={getCurrentDate()}
                   />
                   {passwordVisible ? (
                     <div className="custom-placeHolder">mm/dd/yyyy</div>
@@ -268,9 +282,9 @@ const ProjectForm = () => {
                   )}
                 </div>
               </div>
+             
               <div className="form-outline1">
                 <label className="form-label">End Date</label>
-
                 <div className="date-wrap">
                   <input
                     type={passwordVisible1 ? "date" : "text"}
@@ -280,10 +294,12 @@ const ProjectForm = () => {
                     }`}
                     name="endDate"
                     onFocus={togglePasswordVisibility1}
+                    onBlur={validateEndDate}
                     value={formData.endDate}
                     onChange={(e) => {
                       handleChange(e);
                     }}
+                    min={formData.startDate}
                   />
                   {passwordVisible1 ? (
                     <div className="custom-placeHolder">mm/dd/yyyy</div>
@@ -302,6 +318,7 @@ const ProjectForm = () => {
                   )}
                 </div>
               </div>
+
               <div className="form-outline1">
                 <label className="form-label" for="form2Example2">
                   Contact Number
@@ -325,11 +342,6 @@ const ProjectForm = () => {
                       {fieldErrors.contactNumber}
                     </div>
                   )}
-                  {/* {userType === "student" ? (
-                    <div className="con-code">+1</div>
-                  ) : (
-                    ""
-                  )} */}
                 </div>
               </div>
               <div className="form-outline1">
@@ -367,7 +379,6 @@ const ProjectForm = () => {
                   className={`form-control ${
                     fieldErrors.projectType && "is-invalid"
                   }`}
-                  // required
                 >
                   <option value="">Select</option>
                   {options.map((option) => (
@@ -382,6 +393,25 @@ const ProjectForm = () => {
                   </div>
                 )}
               </div>
+
+              <div className="form-outline1">
+                <label className="form-label" for="form2Example2">
+                  Select Keywords
+                </label>
+                <Select
+                  options={keyWords}
+                  isMulti
+                  onChange={(selectedOptions) => {
+                    handleChange({
+                      target: {
+                        name: "keywords",
+                        value: selectedOptions.map((option) => option.value),
+                      },
+                    });
+                  }}
+                />
+              </div>
+
               <div className="form-outline1">
                 <label className="form-label">Upload File</label>
                 <input

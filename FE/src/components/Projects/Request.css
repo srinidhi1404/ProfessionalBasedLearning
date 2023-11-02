@@ -1,6 +1,7 @@
 /* Request.css */
 .request-container {
   display: flex;
+  min-height: calc(100vh - 100px);
 }
 
 .left-navigation {
@@ -29,7 +30,7 @@
 }
 
 .main-content {
-  /* flex: 3; */
+  flex: 3;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;

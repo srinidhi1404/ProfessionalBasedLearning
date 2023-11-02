@@ -1,29 +1,53 @@
-import React, { useState } from 'react';
-import { Modal, Box, Typography, Button, TextField } from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from 'react';
+import React, { useState } from "react";
+import { Modal, Box, Typography, Button, TextField } from "@mui/material";
+import { Close as CloseIcon } from "@mui/icons-material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTitle }) => {
+import { message } from "antd";
+const ProjectRequestModal = ({
+  open,
+  onClose,
+  projectId,
+  projectEmail,
+  projectTitle,
+}) => {
+  console.log(projectEmail);
   const [requestStatus, setRequestStatus] = useState(null);
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
   const [pdfFile, setPdfFile] = useState("");
-  console.log('pdfFile', pdfFile);
-
+  const [messageApi, contextHolder] = message.useMessage();
   const [values, setValues] = useState({
     projectTitle: projectTitle,
     projectId: projectId,
     projectEmail: projectEmail,
-    firstName: '',
-    secondName: '',
-    email: '',
-    contact: '',
-    experience: '',
-    skill: '',
-    document: '',
+    firstName: "",
+    secondName: "",
+    email: "",
+    contact: "",
+    experience: "",
+    skill: "",
+    document: "",
   });
+
+  const validationRules = {
+    firstName: [{ required: true, message: "First Name is required" }],
+    secondName: [{ required: true, message: "Second Name is required" }],
+    email: [
+      { required: true, message: "Email is required" },
+      { type: "email", message: "Invalid email format" },
+    ],
+    contact: [
+      { required: true, message: "Contact is required" },
+      { pattern: /^[0-9]+$/, message: "Invalid contact number" },
+    ],
+    experience: [{ required: true, message: "Experience is required" }],
+    skill: [{ required: true, message: "Skill is required" }],
+  };
+
+  const [errors, setErrors] = useState({});
+
   const uploadImage = async (e) => {
     setLoading(true);
     let formData = new FormData();
@@ -33,11 +57,10 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
         `http://localhost:3000/api/upload/image`,
         formData
       );
-  
+
       if (response.data.status) {
         setPdfFile(response.data.secureUrl);
-  
-       
+
         setValues({
           ...values,
           document: response.data.secureUrl,
@@ -45,55 +68,80 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
         setLoading(false);
       } else {
         setLoading(false);
-        toast.error('Failed to upload document');
+        toast.error("Failed to upload document");
       }
     } catch (error) {
-      console.error('Error:', error);
       setLoading(false);
-      toast.error('An error occurred while uploading the document');
+      toast.error("An error occurred while uploading the document");
     }
   };
-  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    // Update the values state with the typed values
     setValues({
       ...values,
       [name]: value,
     });
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/post/request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          token: token,
-        },
-        body: JSON.stringify(values),
-      });
+  const validateForm = (values, validationRules) => {
+    const errors = {};
 
-      if (response.ok) {
-        toast.success('Request submitted successfully', {
-          position: 'top-right',
-          autoClose: 3000, // Close the toast after 3 seconds
-        });
-        // setRequestStatus('Request submitted successfully');
+    for (const fieldName in validationRules) {
+      const rules = validationRules[fieldName];
+      for (const rule of rules) {
+        if (rule.required && !values[fieldName]) {
+          errors[fieldName] = rule.message || "Field is required";
+          break;
+        }
 
-        onClose()
-      } else {
-        setRequestStatus('Failed to submit request');
+        if (
+          rule.pattern &&
+          values[fieldName] &&
+          !rule.pattern.test(values[fieldName])
+        ) {
+          errors[fieldName] = rule.message || "Invalid format";
+          break;
+        }
       }
-    } catch (error) {
-      console.error('Error:', error);
-      setRequestStatus('An error occurred');
+    }
+
+    return errors;
+  };
+
+  const handleSubmit = async () => {
+    const newErrors = validateForm(values, validationRules);
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      try {
+        const response = await fetch("http://localhost:3000/api/post/request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+          body: JSON.stringify(values),
+        });
+
+        if (response.ok) {
+          messageApi.open({
+            type: "success",
+            content: "Request posted Sucessfully",
+          });
+          onClose();
+        } else {
+          setRequestStatus("Failed to submit request");
+        }
+      } catch (error) {
+        setRequestStatus("An error occurred");
+      }
     }
   };
 
   return (
     <>
+       {contextHolder}
       <ToastContainer />
       <Modal
         open={open}
@@ -101,11 +149,34 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
       >
-        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
-          <Typography id="modal-title" variant="h6" component="div">
-            Request Project
-          </Typography>
-
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography id="modal-title" variant="h6" component="div">
+              Request Project
+            </Typography>
+            <Button
+              startIcon={<CloseIcon style={{ color: "#006747" }} />}
+              onClick={onClose}
+              className="closeBtn"
+            />
+          </div>
           <TextField
             label="First Name"
             name="firstName"
@@ -114,6 +185,8 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
             fullWidth
             margin="normal"
             size="small"
+            error={Boolean(errors.firstName)}
+            helperText={errors.firstName}
           />
 
           <TextField
@@ -124,6 +197,8 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
             fullWidth
             margin="normal"
             size="small"
+            error={Boolean(errors.secondName)}
+            helperText={errors.secondName}
           />
 
           <TextField
@@ -134,6 +209,8 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
             fullWidth
             margin="normal"
             size="small"
+            error={Boolean(errors.email)}
+            helperText={errors.email}
           />
 
           <TextField
@@ -144,6 +221,8 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
             fullWidth
             margin="normal"
             size="small"
+            error={Boolean(errors.contact)}
+            helperText={errors.contact}
           />
 
           <TextField
@@ -154,6 +233,8 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
             fullWidth
             margin="normal"
             size="small"
+            error={Boolean(errors.experience)}
+            helperText={errors.experience}
           />
 
           <TextField
@@ -164,44 +245,35 @@ const ProjectRequestModal = ({ open, onClose, projectId, projectEmail, projectTi
             fullWidth
             margin="normal"
             size="small"
+            error={Boolean(errors.skill)}
+            helperText={errors.skill}
           />
-
-          {/* <TextField
-          label="Document"
-          name="document"
-          value={values.document}
-          onChange={handleInputChange}
-          fullWidth
-          margin="normal"
-          size="small"
-        /> */}
-                        <label className="form-label"> Document</label>
-          <input type="file" accept=".pdf,.doc,.docx" id="upload" hidden onChange={(e) => uploadImage(e)} />
-          <label for="upload" className="fileupload">{loading ? "Loading" : "Choose file"} </label>
-
-
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            id="upload"
+            hidden
+            onChange={(e) => uploadImage(e)}
+          />
+          <label for="upload" className="fileuploadnew">
+            {loading ? "Loading" : "Choose file"}{" "}
+          </label>
 
           <Button
-          variant="contained"
-          color="primary"
-          startIcon={<CloseIcon />}
-          onClick={onClose}
-          sx={{ mt: -117, marginLeft: 35,backgroundColor: '#006747', color: 'white' }}
-        >
-         
-        </Button>
-
-          <Button
-          style={{ backgroundColor: '#006747', color: 'white' }}
+            style={{ backgroundColor: "#006747", color: "white" }}
             variant="contained"
             color="primary"
             onClick={handleSubmit}
-            sx={{ mt: 2,ml:10 }}
+            sx={{ width: "100%", margin: "15px 0px 0px 0px" }}
           >
             Submit Request
           </Button>
 
-          {requestStatus && <Typography variant="body2" sx={{ mt: 2 }}>{requestStatus}</Typography>}
+          {requestStatus && (
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              {requestStatus}
+            </Typography>
+          )}
         </Box>
       </Modal>
     </>

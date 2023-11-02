@@ -2,25 +2,19 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import TablePagination from "@mui/material/TablePagination";
-import NavbarLogout from "../NavLogout/navLogout";
 import FlagButton from "../StatusButton/flagButton";
-import FlagSubButton from "../StatusButton/FlagSubButton";
 import { fetchApi } from "../../Utils/Request";
-import { Tabs, Tab } from "react-bootstrap";
+import defaultImageLink from "../../asset/image/defaultProfile.jpeg"
 import "./FlagList.css";
 const FlagList = () => {
   const [show, setShow] = useState(false);
   const [showone, setShowone] = useState(false);
   const [comtdetails, setcommentDetails] = useState([]);
-  const [SubcommentDetails, setSubcommentDetails] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [pageone, setPageone] = useState(0);
-  const [rowsPerPageone, setRowsPerPageone] = useState(10);
   const [projectId, setProjectId] = useState("");
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const handleCloseone = () => setShowone(false);
   const handleShowone = () => setShowone(true);
   useEffect(() => {
     GetPro();
@@ -37,39 +31,18 @@ const FlagList = () => {
 
   const GetPro = async () => {
     let response = await fetchApi("/admin/flag-user", "", "GET");
-    console.log(",response", response.users);
     if (response) {
       setcommentDetails(response.users);
-      //   setSubcommentDetails(
-      //     response?.data.subComments.filter((val) => val.flag > 0).filter((v) => v.disable === 0)
-      //   );
+
     }
   };
 
-  const qwerty = (id) => {
-    console.log(id, "ID");
-    setProjectId(id);
-    handleShow();
-    setShow(true);
-  };
-
-  const qwertyone = (id) => {
-    console.log(id, "ID");
-    setProjectId(id);
-    handleShowone();
-    setShowone(true);
-  };
+ 
 
   return (
     <>
       <div className="mytabs-con">
-        <Tabs
-          defaultActiveKey="comments"
-          id="uncontrolled-tab-example"
-          className="w-100"
-        >
-          <Tab eventKey="comments" title="User">
-            <div
+      <div
               className="tableWrap"
               style={{
                 width: "80%",
@@ -99,22 +72,22 @@ const FlagList = () => {
                         <td>{a.firstName}</td>
                         <td>{a.email}</td>
                         <td>
-                        <img
-      src={a.image}
-      alt="User Image"
-      style={{
-        width: "10%", // Makes the image take the full width of the container
-        height: "10%", // Makes the image take the full height of the container
-        objectFit: "cover", // Scales and crops the image to fit the container
-        transition: "transform 0.3s", // Adds a smooth transition effect for zooming
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.transform = "scale(10.2)"; // Zoom in by 20% on hover
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = "scale(1)"; // Reset to normal size on mouse leave
-      }}
-    />
+                          <img
+                           src={a.image || defaultImageLink}
+                           alt="User Profile"
+                            style={{
+                              width: "10%",
+                              height: "10%",
+                              objectFit: "cover",
+                              transition: "transform 0.3s",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.transform = "scale(10.2)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.transform = "scale(1)";
+                            }}
+                          />
                         </td>
                         <td>{a.flag}</td>
                         {/* <td>
@@ -146,8 +119,6 @@ const FlagList = () => {
                 GetPro={GetPro}
               />
             </div>
-          </Tab>
-        </Tabs>
       </div>
     </>
   );

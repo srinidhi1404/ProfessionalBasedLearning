@@ -110,8 +110,8 @@ const postProject = async (req, res) => {
       projectSummary,
       projectType,
       document,
+      keywords, // Add keywords to the request body
     } = req.body;
-
     // Check if all mandatory fields are provided
     if (
       !projectTitle ||
@@ -120,7 +120,8 @@ const postProject = async (req, res) => {
       !contactNumber ||
       !projectSummary ||
       projectType === undefined ||
-      !document
+      !document ||
+      !keywords
     ) {
       res.json({
         message: "All mandatory fields must be provided",
@@ -134,11 +135,10 @@ const postProject = async (req, res) => {
       const projectId = bookidgen("STD-", 14522, 199585);
       const imageQuery = "SELECT id, image FROM student WHERE email = ?";
       const [image] = await pool.query(imageQuery, [email]);
-      console.log(image[0].image);
       const profileImage = image[0].image;
       const userId = image[0].id;
       const insertQuery =
-        "INSERT INTO studentProject (projectTitle,projectId,email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, firstName, secondName, image, userId) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO studentProject (projectTitle, projectId, email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, firstName, secondName, image, userId, keywords) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
       await pool.query(insertQuery, [
         projectTitle,
@@ -155,6 +155,7 @@ const postProject = async (req, res) => {
         secondName,
         profileImage,
         userId,
+        JSON.stringify(keywords), // Store keywords as JSON string
       ]);
 
       res
@@ -274,7 +275,7 @@ const getStudentDetails = async (req, res) => {
     const email = req.data.id;
 
     const userQuery =
-      "SELECT id,firstName,secondName,email FROM student WHERE email = ?";
+      "SELECT id,firstName,secondName,email, image FROM student WHERE email = ?";
     const [userResult] = await pool.query(userQuery, [email]);
 
     if (userResult.length === 0) {
@@ -395,6 +396,142 @@ const getRequst = async (req, res) => {
     });
   }
 };
+
+function checkMissingFields(requiredFields, data) {
+  const missingFields = [];
+  requiredFields.forEach((field) => {
+    if (data[field] === undefined || data[field] === null) {
+      missingFields.push(field);
+    }
+  });
+  return missingFields;
+}
+const editProject = async (req, res) => {
+  try {
+    const requiredFields = [
+      "projectId",
+      "projectTitle",
+      "projectDescription",
+      "startDate",
+      "endDate",
+      "contactNumber",
+      "projectSummary",
+      "projectType",
+      "document",
+      "keywords",
+    ];
+
+    const missingFields = checkMissingFields(requiredFields, req.body);
+
+    if (missingFields.length > 0) {
+      res.json({
+        message: `The following fields are missing: ${missingFields.join(
+          ", "
+        )}`,
+        status: false,
+      });
+      return;
+    }
+
+    const {
+      projectId,
+      projectTitle,
+      projectDescription,
+      startDate,
+      endDate,
+      contactNumber,
+      projectSummary,
+      projectType,
+      document,
+      keywords,
+    } = req.body;
+
+    const email = req.data.id;
+    const firstName = req.data.firstName;
+    const secondName = req.data.secondName;
+
+    // Check if the project exists before proceeding with the update
+    const projectExistQuery = `
+      SELECT projectId FROM studentProject 
+      WHERE projectId = ? AND email = ?`;
+
+    const [existingProject] = await pool.query(projectExistQuery, [
+      projectId,
+      email,
+    ]);
+
+    if (existingProject.length === 0) {
+      res.json({
+        message: "Project does not exist.",
+        status: false,
+      });
+      return;
+    }
+
+    // Update the project in the database
+    const updateQuery = `
+      UPDATE studentProject 
+      SET projectTitle = ?, projectDescription = ?, startDate = ?, endDate = ?, 
+          contactNumber = ?, projectSummary = ?, projectType = ?, 
+          document = ?, keywords = ?, firstName = ?, secondName = ?
+      WHERE projectId = ? AND email = ?`;
+
+    await pool.query(updateQuery, [
+      projectTitle,
+      projectDescription,
+      startDate,
+      endDate,
+      contactNumber,
+      projectSummary,
+      projectType,
+      document,
+      JSON.stringify(keywords),
+      firstName,
+      secondName,
+      projectId,
+      email,
+    ]);
+
+    res.json({ message: "Project updated successfully", status: true });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+
+const deleteProject = async (req, res) => {
+  try {
+    const { projectId } = req.body;
+
+    // Check if the 'projectId' is provided in the request body
+    if (!projectId) {
+      res.json({
+        message:
+          "projectId is mandatory and must be provided in the request body",
+        status: false,
+      });
+      return;
+    }
+
+    const email = req.data.id;
+
+    // Delete the project from the database
+    const deleteQuery =
+      "DELETE FROM studentProject WHERE projectId = ? AND email = ?";
+
+    await pool.query(deleteQuery, [projectId, email]);
+
+    res.json({ message: "Project deleted successfully", status: true });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -406,4 +543,6 @@ module.exports = {
   postSubComment,
   uploadImage,
   getRequst,
+  editProject,
+  deleteProject,
 };

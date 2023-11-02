@@ -10,24 +10,25 @@ import ProjectForm from "./components/ProjectForm/projectForm";
 import UserProfile from "./components/UserProfile/userProfile";
 import AdminProjectList from "./components/AdminProjectList/adminProjectList";
 import FlagList from "./components/flagList/FlagList";
-import FlagUser from "./components/flagList/FlagUser";
+import FlagUser from "./components/flagUser/flagUser";
+import FlagProject from "./components/flagProject/flagProject";
 import Auth from "./components/Auth/Auth";
 import NavbarLogout from "./components/NavLogout/navLogout";
 import ViewProject from "./components/Projects/ViewProject";
 import Request from "./components/Projects/Request";
 import UserDetails from "./components/Projects/UserDetails";
 import ViewAdminProject from "./components/Projects/ViewProject-Admin";
+import PublicProject from "./components/PublicNavbar/PublicProject";
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
-
         <Route path="/login" element={<LoginForm />} />
         <Route path="/sign-up" element={<SignupForm />} />
-
         <Route path="/forgot-Password" element={<ForgotPasswordForm />} />
         <Route path="/reset-Password" element={<ResetPassword />} />
+        <Route path="/PublicProject" element={<PublicProject />} />
         <Route element={<NavbarLogout />}>
           <Route
             path="/projects"
@@ -45,14 +46,7 @@ function App() {
               </Auth>
             }
           />
-          <Route
-            path="/viewprojects"
-            element={
-              <Auth>
-                <ViewProject />
-              </Auth>
-            }
-          />
+          <Route path="/viewprojects" element={<ViewProject />} />
           <Route
             path="/viewproject-admin"
             element={
@@ -114,6 +108,14 @@ function App() {
             element={
               <Auth>
                 <FlagUser />
+              </Auth>
+            }
+          />
+          <Route
+            path="/flagProject"
+            element={
+              <Auth>
+                <FlagProject />
               </Auth>
             }
           />

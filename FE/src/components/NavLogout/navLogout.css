@@ -4,6 +4,7 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
+  box-shadow: 0 3px 6px rgba(0,0,0,.16), 0 3px 6px rgba(0,0,0,.23);
 }
 
 .LogoutDiv2 {
@@ -21,6 +22,17 @@
 .LogoutDiv3 {
   height: 100px;
   color: #006747;
+  font-weight: bold;
+  font-size: 25px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+}
+.LogoutDiv3New{
+  height: 100px;
+  color: white;
   font-weight: bold;
   font-size: 25px;
   height: 100px;
@@ -65,8 +77,8 @@
   padding: 0 30px;
 }
 
-.LogoutDiv4 .logoutNavImgRight {
-  color: #006747;
+.LogoutDiv4 .logoutNavImgRight  {
+
   height: 40px;
   padding: 0 10px;
 }

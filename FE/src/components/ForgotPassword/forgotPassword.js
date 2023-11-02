@@ -1,4 +1,3 @@
-// import './resetPassword.css';
 import "./ForgotPassword.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -22,7 +21,6 @@ const ForgotPasswordForm = ({
 }) => {
   const [formData, setFormData] = useState({ ...formDetails });
   const [errors, setErrors] = useState({});
-  console.log(errors, "ForgotPassword");
   const [messageApi, contextHolder] = message.useMessage();
 
   const [show1, setShow] = useState(false);
@@ -44,7 +42,6 @@ const ForgotPasswordForm = ({
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log("name>>>>", name, value);
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
@@ -64,9 +61,7 @@ const ForgotPasswordForm = ({
       });
       handleClose();
     }
-    console.log("clickable", newErrors);
     if (Object.keys(newErrors).length === 0) {
-      console.log("api call");
       let response = await fetchApi("/api/forgotpassword", formData, "POST");
       if (response.status === true) {
 
@@ -97,7 +92,6 @@ const ForgotPasswordForm = ({
           },
         });
       }
-      console.log("response data", response.status);
     }
   };
 
@@ -136,7 +130,8 @@ const ForgotPasswordForm = ({
                     We'll send you a link to reset your password.
                   </p>
                   <Button
-                    variant="primary rounded-pill "
+                    variant="primary rounded-pill"
+                    className="resetbtn"
                     style={{ marginRight: "330px" }}
                     type="submit"
                   >

@@ -1,17 +1,13 @@
 .tableWrap{
-    width: 80% !important;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10%;
-    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)
-
+    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+    width: 80%;
 }
 .Approved{
-    background-color: 	#198754;
+    border: 1px solid#198754;
     padding: 2px;
     width: 120px;
     text-align: center;
-    color: white;
+    color: #198754;
     border-radius: 10px;
 }
 .Rejected{
@@ -38,6 +34,52 @@
     color: black;
     border-radius: 10px;
 }
-.pagination-wrap{
-    min-height: 85vh !important;
+
+  .search-flex{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 150px;
   }
+  .pagination-wrap{
+    display: flex;
+    justify-content: center;
+  }
+  .search-flex-new{
+    display: flex;
+  }
+  .tab-buttons {
+    display: flex;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 25px 150px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px 10px;
+  text-align: center;
+  background-color: #eaeaea;
+  color: #333;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+}
+
+.tab-button:hover {
+  background-color: #ccc;
+}
+
+.active-tab {
+  background-color: #006747;
+  color: #fff;
+  font-weight: bold;
+  padding: 3px 10px;
+}
+.normal-tab-btn{
+    color: #006747;
+    font-weight: bold;
+    padding: 3px 10px;
+}
+

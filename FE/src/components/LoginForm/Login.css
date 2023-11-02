@@ -46,8 +46,6 @@
   margin-right: 10%;
 }
 #logIn {
-  width: 85% !important;
-  margin-left: 0px;
   height: 45px;
   border-radius: 40px;
   font-weight: bold;
@@ -55,15 +53,15 @@
 }
 .register {
   cursor: pointer;
-  color: #007bff;
-  margin-right: 110px;
+  color: #009460;
   text-decoration: none;
 }
 .forpass {
-  padding-left: 125px;
+text-align: end;
   cursor: pointer;
-  color: #007bff;
+  color: #009460;
   text-decoration: none;
+  font-size: 14px;
 }
 .form2Example1 {
   border-radius: 5%;
@@ -92,4 +90,10 @@
 }
 .mainDiv img{
   mix-blend-mode: color-burn;
+}
+
+.mybuttonBn{
+  width: 100%;
+  background-color: #006747;
+  color: white;
 }

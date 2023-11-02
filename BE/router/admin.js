@@ -12,5 +12,6 @@ router.post("/disable/sub-comment", auth, admin.disableSubComment);
 router.get("/all/comments", auth, admin.getAllComments);
 router.get("/flag-user", auth, admin.getUsersWithFlag);
 router.post("/disable/user", auth, admin.disableUser);
+router.get("/all/user", auth, admin.getAllUsers);
 
 module.exports = router;

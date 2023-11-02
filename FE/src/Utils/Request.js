@@ -3,7 +3,7 @@ export const fetchApi = async (endpoint, body, method) => {
 
   let baseUrl = "http://localhost:3000";
   let data = {
-    method: method, // or 'PUT'
+    method: method, 
     headers: {
       "content-type": "application/json",
       token: auth ? auth : null,

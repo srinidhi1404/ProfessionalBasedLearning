@@ -6,7 +6,7 @@ import { fetchApi } from "../../Utils/Request";
 import OTPInput from "otp-input-react";
 import { message } from "antd";
 
-const ResetPassword = ({ show1, email, handleClose1 }) => {
+const ResetPassword = ({ email, handleClose1 }) => {
   const formDetails = {
     newPassword: "",
     resetToken: "",
@@ -19,15 +19,6 @@ const ResetPassword = ({ show1, email, handleClose1 }) => {
 
   React.useEffect(() => {}, [errors, formData]);
 
-  // const validationRules = {
-  //   email: [
-  //     {
-  //       required: true,
-  //       pattern: /\S+@\S+\.\S+/,
-  //       errorMessage: "Invalid email format",
-  //     },
-  //   ],
-  // };
   const handleChange = (e, name) => {
     if (name === "resetToken") {
       setFormData({ ["resetToken"]: e });
@@ -151,7 +142,7 @@ const ResetPassword = ({ show1, email, handleClose1 }) => {
             <Button
               variant="primary rounded-pill "
               style={{ marginRight: "330px" }}
-              className="mt-3"
+              className="mt-3 resetbtn"
               type="submit"
             >
               Reset Password

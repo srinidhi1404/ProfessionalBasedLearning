@@ -51,11 +51,33 @@ const login = async (req, res) => {
 };
 const signup = async (req, res) => {
   try {
-    const { firstName, secondName, email, password, otp } = req.body;
-    if (!firstName || !secondName || !email || !password || !otp) {
-      res.json({ message: "Enter all data including OTP", status: false });
+    const {
+      firstName,
+      secondName,
+      email,
+      password,
+      otp,
+      education,
+      intro,
+      contact,
+    } = req.body;
+    if (
+      !firstName ||
+      !secondName ||
+      !email ||
+      !password ||
+      !otp ||
+      !education ||
+      !intro ||
+      !contact
+    ) {
+      res.json({
+        message: "Enter all data including OTP, education, intro, and contact",
+        status: false,
+      });
       return;
     }
+
     const otpQuery =
       "SELECT * FROM user WHERE email = ? AND resetToken = ? AND resetTokenExpiration > NOW()";
     const [otpRows] = await pool.query(otpQuery, [email, otp]);
@@ -66,15 +88,21 @@ const signup = async (req, res) => {
       });
       return;
     }
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const updateQuery =
-      "UPDATE user SET firstName = ?, secondName = ?, password = ? WHERE email = ?";
+      "UPDATE user SET firstName = ?, secondName = ?, password = ?, education = ?, intro = ?, contact = ? WHERE email = ?";
     await pool.query(updateQuery, [
       firstName,
       secondName,
       hashedPassword,
+      education,
+      intro,
+      contact,
       email,
     ]);
+
     res
       .status(201)
       .json({ message: "User signed up successfully", status: true });
@@ -302,6 +330,7 @@ const postProject = async (req, res) => {
       projectSummary,
       projectType,
       document,
+      keywords, // Add keywords to the request body
     } = req.body;
 
     // Check if all mandatory fields are provided
@@ -312,46 +341,48 @@ const postProject = async (req, res) => {
       !contactNumber ||
       !projectSummary ||
       projectType === undefined ||
-      !document
+      !document ||
+      !keywords
     ) {
       res.json({
         message: "All mandatory fields must be provided",
         status: false,
       });
-    } else {
-      const email = req.data.id;
-      const firstName = req.data.firstName;
-      const secondName = req.data.secondName;
-      const projectId = bookidgen("Guest-", 14522, 199585);
-      const imageQuery = "SELECT id, image FROM user WHERE email = ?";
-      const [image] = await pool.query(imageQuery, [email]);
-      console.log(image);
-      const profileImage = image[0].image;
-      const userId = image[0].id;
-      const insertQuery =
-        "INSERT INTO projects (projectTitle, projectId,email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, firstName, secondName, image, userId) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-      await pool.query(insertQuery, [
-        projectTitle,
-        projectId,
-        email,
-        projectDescription,
-        startDate,
-        endDate,
-        contactNumber,
-        projectSummary,
-        projectType,
-        document,
-        firstName,
-        secondName,
-        profileImage,
-        userId,
-      ]);
-
-      res
-        .status(201)
-        .json({ message: "Project posted successfully", status: true });
+      return;
     }
+
+    const email = req.data.id;
+    const firstName = req.data.firstName;
+    const secondName = req.data.secondName;
+    const projectId = bookidgen("Guest-", 14522, 199585);
+    const imageQuery = "SELECT id, image FROM user WHERE email = ?";
+    const [image] = await pool.query(imageQuery, [email]);
+    const profileImage = image[0].image;
+    const userId = image[0].id;
+    const insertQuery =
+      "INSERT INTO projects (projectTitle, projectId, email, projectDescription, startDate, endDate, contactNumber, projectSummary, projectType, document, keywords, firstName, secondName, image, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    await pool.query(insertQuery, [
+      projectTitle,
+      projectId,
+      email,
+      projectDescription,
+      startDate,
+      endDate,
+      contactNumber,
+      projectSummary,
+      projectType,
+      document,
+      JSON.stringify(keywords), // Store keywords as JSON string
+      firstName,
+      secondName,
+      profileImage,
+      userId,
+    ]);
+
+    res
+      .status(201)
+      .json({ message: "Project posted successfully", status: true });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -359,6 +390,7 @@ const postProject = async (req, res) => {
     });
   }
 };
+
 function getCommentsByProjectId(comments, projectId) {
   return comments.filter((comment) => comment.projectId === projectId);
 }
@@ -432,7 +464,7 @@ const getUserDetails = async (req, res) => {
     const email = req.data.id;
 
     const userQuery =
-      "SELECT id,firstName,secondName,email FROM user WHERE email = ?";
+      "SELECT id,firstName,secondName,email,image,education,intro,contact FROM user WHERE email = ?";
     const [userResult] = await pool.query(userQuery, [email]);
 
     if (userResult.length === 0) {
@@ -644,7 +676,6 @@ const uploadImage = async (req, res) => {
     WHERE email = ?
     `;
     const [result] = await pool.query(updateProjectsImageQuery, [image, email]);
-    console.log(result);
     res.json({ message: "Image updated successfully", status: true });
   } catch (error) {
     console.log(error.message);
@@ -851,10 +882,11 @@ const updateRequestStatus = async (req, res) => {
 const flagProject = async (req, res) => {
   try {
     const { projectId, flag } = req.body;
-    if (!projectId || flag !== undefined) {
-      return res
-        .status(400)
-        .json({ message: "Project ID and flag are required", status: false });
+    if (typeof projectId === "undefined" || typeof flag !== "boolean") {
+      return res.status(400).json({
+        message: "Project ID and flag are required, and flag must be a boolean",
+        status: false,
+      });
     }
     const checkProjectQuery = "SELECT * FROM projects WHERE projectId = ?";
     const [existingProject] = await pool.query(checkProjectQuery, [projectId]);
@@ -931,6 +963,211 @@ const disableProject = async (req, res) => {
     return res.status(500).json({ message: error.message, status: false });
   }
 };
+function checkMissingFields(requiredFields, data) {
+  const missingFields = [];
+  requiredFields.forEach((field) => {
+    if (data[field] === undefined || data[field] === null) {
+      missingFields.push(field);
+    }
+  });
+  return missingFields;
+}
+const editProject = async (req, res) => {
+  try {
+    const requiredFields = [
+      "projectId",
+      "projectTitle",
+      "projectDescription",
+      "startDate",
+      "endDate",
+      "contactNumber",
+      "projectSummary",
+      "projectType",
+      "document",
+      "keywords",
+    ];
+
+    const missingFields = checkMissingFields(requiredFields, req.body);
+
+    if (missingFields.length > 0) {
+      res.json({
+        message: `The following fields are missing: ${missingFields.join(
+          ", "
+        )}`,
+        status: false,
+      });
+      return;
+    }
+
+    const {
+      projectId,
+      projectTitle,
+      projectDescription,
+      startDate,
+      endDate,
+      contactNumber,
+      projectSummary,
+      projectType,
+      document,
+      keywords,
+    } = req.body;
+
+    const email = req.data.id;
+    const firstName = req.data.firstName;
+    const secondName = req.data.secondName;
+
+    // Check if the project exists before proceeding with the update
+    const projectExistQuery = `
+      SELECT projectId FROM projects 
+      WHERE projectId = ? AND email = ?`;
+
+    const [existingProject] = await pool.query(projectExistQuery, [
+      projectId,
+      email,
+    ]);
+
+    if (existingProject.length === 0) {
+      res.json({
+        message: "Project does not exist.",
+        status: false,
+      });
+      return;
+    }
+
+    // Update the project in the database
+    const updateQuery = `
+      UPDATE projects 
+      SET projectTitle = ?, projectDescription = ?, startDate = ?, endDate = ?, 
+          contactNumber = ?, projectSummary = ?, projectType = ?, 
+          document = ?, keywords = ?, firstName = ?, secondName = ?
+      WHERE projectId = ? AND email = ?`;
+
+    await pool.query(updateQuery, [
+      projectTitle,
+      projectDescription,
+      startDate,
+      endDate,
+      contactNumber,
+      projectSummary,
+      projectType,
+      document,
+      JSON.stringify(keywords),
+      firstName,
+      secondName,
+      projectId,
+      email,
+    ]);
+
+    res.json({ message: "Project updated successfully", status: true });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+
+const deleteProject = async (req, res) => {
+  try {
+    const { projectId } = req.body;
+
+    // Check if the 'projectId' is provided in the request body
+    if (!projectId) {
+      res.json({
+        message:
+          "projectId is mandatory and must be provided in the request body",
+        status: false,
+      });
+      return;
+    }
+
+    const email = req.data.id;
+
+    // Delete the project from the database
+    const deleteQuery =
+      "DELETE FROM projects WHERE projectId = ? AND email = ?";
+
+    await pool.query(deleteQuery, [projectId, email]);
+
+    res.json({ message: "Project deleted successfully", status: true });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+const getUserDetail = async (req, res) => {
+  try {
+    const { userId, email } = req.body;
+
+    // Check if userId and email are provided in the request body
+    if (!userId || !email) {
+      return res.status(400).json({
+        message: "userId and email are mandatory fields",
+        status: false,
+      });
+    }
+
+    // Rest of your code remains the same...
+
+    // Check if the user exists in the user table
+    const checkUserQuery = "SELECT * FROM user WHERE id = ? AND email = ?";
+    const [user] = await pool.query(checkUserQuery, [userId, email]);
+
+    if (user.length > 0) {
+      // User found in the user table
+      // Get the count of projects associated with the user's email
+      const userProjectCountQuery =
+        "SELECT COUNT(*) as projectCount FROM projects WHERE email = ?";
+      const [userProjectCount] = await pool.query(userProjectCountQuery, [
+        email,
+      ]);
+
+      return res.status(200).json({
+        message: "User found in the user table",
+        status: true,
+        user: { ...user[0], projectCount: userProjectCount[0].projectCount },
+      });
+    } else {
+      // User not found in the user table, check the student table
+      const checkStudentQuery =
+        "SELECT * FROM student WHERE id = ? AND email = ?";
+      const [student] = await pool.query(checkStudentQuery, [userId, email]);
+
+      if (student.length > 0) {
+        // User found in the student table
+        // Get the count of projects associated with the user's email from the studentProject table
+        const studentProjectCountQuery =
+          "SELECT COUNT(*) as projectCount FROM studentProject WHERE email = ?";
+        const [studentProjectCount] = await pool.query(
+          studentProjectCountQuery,
+          [email]
+        );
+
+        return res.status(200).json({
+          message: "User found in the student table",
+          status: true,
+          user: {
+            ...student[0],
+            projectCount: studentProjectCount[0].projectCount,
+          },
+        });
+      } else {
+        // User not found in either table
+        return res.status(404).json({
+          message: "User not found in user or student table",
+          status: false,
+        });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
 
 module.exports = {
   signup,
@@ -953,4 +1190,7 @@ module.exports = {
   updateRequestStatus,
   flagProject,
   disableProject,
+  editProject,
+  deleteProject,
+  getUserDetail,
 };
