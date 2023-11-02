@@ -8,17 +8,12 @@ const admin = require("./router/admin");
 const meta = require("./router/meta");
 const fileupload = require("express-fileupload");
 
-const port = process.env.PORT || 3000;
-
+const port = 3000;
 // security
 app.use(helmet());
 
 // cors
-app.use(cors({
-  origin: "https://professional-based-learning-qene.vercel.app", // Allow requests from your Vercel domain
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // Enable credentials (cookies, authentication headers)
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(fileupload({ useTempFiles: true }));

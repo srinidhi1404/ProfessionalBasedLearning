@@ -89,7 +89,7 @@ const getAllProjects = async (req, res) => {
     const [projects] = await pool.query(selectQuery);
     const studentQuery = `
     SELECT * FROM studentProject
-    WHERE projectType = 1
+    WHERE projectType in(0,1)
   `;
     const [studentProjects] = await pool.query(studentQuery);
 
