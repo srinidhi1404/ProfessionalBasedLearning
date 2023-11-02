@@ -35,6 +35,7 @@ const AdminProjectList = () => {
   const GetPro = async () => {
     setMainLoader(true)
     let response = await fetchApi("/admin/all/project", "", "GET");
+
     if (response.status) {
       const currentDate = moment(); 
 
