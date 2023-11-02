@@ -2,20 +2,22 @@
     "version": 2,
     "routes": [
       {
-        "handle": "filesystem"
-      },
-      {
         "src": "/api/(.*)",
-        "dest": "/api/$1"
+        "dest": "api/$1.js"
       },
       {
-        "handle": "hit",
-        "status": 404
+        "src": "/images/(.*)",
+        "headers": { "Cache-Control": "public, max-age=31536000" },
+        "dest": "/images/$1"
       },
       {
         "src": "/(.*)",
-        "dest": "/index.html"
+        "dest": "/$1.html"
       }
-    ]
+    ],
+    "env": {
+      "API_KEY": "my-api-key",
+      "NODE_ENV": "production"
+    }
   }
   
