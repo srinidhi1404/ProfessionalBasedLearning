@@ -14,7 +14,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/user-profile");
@@ -48,7 +49,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/project-form");
@@ -82,7 +84,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/projects");
@@ -116,7 +119,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/request");
@@ -152,7 +156,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/project-list");
@@ -186,7 +191,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/flagList");
@@ -220,7 +226,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/flagProject");
@@ -254,7 +261,8 @@ const Dashboard = () => {
       title2: (
         <div
         style={{
-          backgroundColor: "#006747"
+          backgroundColor: "#006747",
+          color: "white"
         }}
           onClick={() => {
             navigate("/flagUser");
