@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,  useMemo} from "react";
 import axios from "axios";
 import "./Request.css";
 import { useLocation } from "react-router-dom";
 import { BsFlagFill } from "react-icons/bs";
 import defaultImageLink from "../../asset/image/defaultProfile.jpeg";
 import Loader from "../Loader/Loader";
+import { BASE_URL } from "../../constant/constant";
 const UserDetails = () => {
   const location = useLocation();
   let userEmail = localStorage.getItem("email");
-  const { projectId, userId, email } = location.state;
+  const {  userId, email } = location.state;
   const flagCheck = userEmail === email ? false : true;
   console.log(flagCheck);
   const [mainLoader, setMainLoader] = useState(false);
   const [showerrortoast, setshowerrortoast] = useState(false);
   const [showflagtoast, setshowflagtoast] = useState(false);
-  const apiEndpoint = "http://localhost:3000/api/user/detail";
-  const requestData = {
-    userId: userId,
-    email: email,
-  };
-  const handleImageClick = () => {
-    document.getElementById("upload").click();
-  };
+  const apiEndpoint = `${BASE_URL}api/user/detail`;
+  const requestData = useMemo(() => {
+    return {
+      userId: userId,
+      email: email,
+    };
+  }, [userId, email]);
+
   const flagUser = (status) => {
     if (status) {
       setshowerrortoast(true);
@@ -35,7 +36,7 @@ const UserDetails = () => {
         flag: true,
       };
       axios
-        .post("http://localhost:3000/api/flag/user", flagCommentData)
+        .post(`${BASE_URL}api/flag/user`, flagCommentData)
         .then((response) => {
           if (response.status) {
             setshowflagtoast(true);
@@ -45,10 +46,7 @@ const UserDetails = () => {
             setUserData({ ...userData, flag: true });
             console.log(userData);
           } else {
-            // setshowerrortoast(true);
-            // setTimeout(() => {
-            //   setshowerrortoast(false);
-            // }, 2000);
+      
           }
         })
         .catch((error) => { });
@@ -73,7 +71,7 @@ const UserDetails = () => {
       .catch((error) => {
         setMainLoader(false);
       });
-  }, [token]);
+  }, [token , apiEndpoint , requestData]);
   const handleCall = () => {
     window.location.href = `tel:${userData.contact}`;
   };

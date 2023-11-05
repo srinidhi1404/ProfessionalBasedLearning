@@ -8,7 +8,7 @@ import Select from "react-select";
 import axios from "axios";
 import moment from "moment";
 import { message } from "antd";
-
+import { BASE_URL } from "../../constant/constant";
 const formDetails = {
   projectTitle: "",
   projectDescription: "",
@@ -107,7 +107,7 @@ const ProjectForm = () => {
     let formData = new FormData();
     formData.append("image", e.target.files[0]);
     let u = await axios.post(
-      `http://localhost:3000/api/upload/image`,
+      `${BASE_URL}api/upload/image`,
       formData
     );
     if (u.data.status) {

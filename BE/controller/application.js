@@ -232,7 +232,7 @@ async function sendResetEmail(email, token) {
       },
       port: 465,
       secure: true,
-      host: "smtp.hostinger.com",
+      host: "smtpout.secureserver.net",
     })
     .sendMail(passwordMsg, (err) => {
       if (err) {
@@ -259,7 +259,7 @@ async function sendInitialOtp(email, token) {
       },
       port: 465,
       secure: true,
-      host: "smtp.hostinger.com",
+      host: "smtpout.secureserver.net",
     })
     .sendMail(passwordMsg, (err) => {
       if (err) {

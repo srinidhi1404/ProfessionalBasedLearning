@@ -12,7 +12,7 @@ const FlagProject = () => {
   const [comtdetails, setcommentDetails] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
-  const [projectId, setProjectId] = useState("");
+  const projectId = ""
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [mainLoader, setMainLoader] = useState(false);

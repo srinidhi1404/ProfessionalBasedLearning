@@ -21,10 +21,10 @@ const FlagList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [pageone, setPageone] = useState(0);
   const [rowsPerPageone, setRowsPerPageone] = useState(8);
-  const [projectId, setProjectId] = useState("");
+  const projectId = ""
   const [searchText, setSearchText] = useState("");
   const [activeTab, setActiveTab] = useState("comments");
-  const [disableVal, setDisableVal] = useState(false);
+  const disableVal = false
   const [mainLoader, setMainLoader] = useState(false)
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -47,7 +47,7 @@ const FlagList = () => {
       );
       setSubCommentDetails(filteredData);
     }
-  }, [searchText, activeTab]);
+  }, [searchText, activeTab , originalCommentData , originalSubCommentData]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -119,188 +119,187 @@ const FlagList = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setSearchText(""); 
-    setPage(0); 
+    setSearchText("");
+    setPage(0);
   };
 
   return (
     <>
-    {
-      mainLoader ? <div><Loader/></div> : <div className="view-project-prentmin">
-      <div className="search-flex">
-        <h2>Comments List</h2>
-        <div className="search-flex-new">
-          <div className="sort-con">
-            <p onClick={handleSort}>
-              <img src={SortImg} alt="" />
-            </p>
+      {
+        mainLoader ? <div><Loader /></div> : <div className="view-project-prentmin">
+          <div className="search-flex">
+            <h2>Comments List</h2>
+            <div className="search-flex-new">
+              <div className="sort-con">
+                <p onClick={handleSort}>
+                  <img src={SortImg} alt="" />
+                </p>
+              </div>
+              <input
+                type="text"
+                placeholder={`Search ${activeTab === "comments" ? "Comment" : "Sub Comment"
+                  }`}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                style={{
+                  color: "black",
+                  border: "1px solid #006747",
+                  borderRadius: "4px",
+                  padding: "8px",
+                  width: "370px",
+                }}
+              />
+            </div>
           </div>
-          <input
-            type="text"
-            placeholder={`Search ${
-              activeTab === "comments" ? "Comment" : "Sub Comment"
-            }`}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{
-              color: "black",
-              border: "1px solid #006747",
-              borderRadius: "4px",
-              padding: "8px",
-              width: "370px",
-            }}
-          />
-        </div>
-      </div>
 
-      <Tabs
-        defaultActiveKey="comments"
-        id="uncontrolled-tab-example"
-        className="mycustomtab"
-        onSelect={handleTabChange} 
-      >
-        <Tab eventKey="comments" title="Comments">
-          <div className="pagination-wrap">
-            <div className="tableWrap">
-              <table className="table table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Comment</th>
-                    <th scope="col">Flag count</th>
-                    <th scope="col">Accept / Reject</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comtdetails
-                    .slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                    .map((a, b) => (
-                      <tr key={b} id={a.projectId}>
-                        <th scope="row">{b + 1}</th>
-                        <td>{a.firstName}</td>
-                        <td>{a.text}</td>
-                        <td>{a.flag}</td>
-                        <td>
-                          <div>
-                            <button
-                              type="button"
-                              className={
-                                a.disable
-                                  ? "btn btn-success btn-sm"
-                                  : "btn btn-danger btn-sm"
-                              }
-                              onClick={() => {
-                                qwerty(a);
-                              }}
-                            >
-                              {!a.disable
-                                ? "Disable Comment"
-                                : "Enable Comment"}
-                            </button>
-                          </div>
-                        </td>
+          <Tabs
+            defaultActiveKey="comments"
+            id="uncontrolled-tab-example"
+            className="mycustomtab"
+            onSelect={handleTabChange}
+          >
+            <Tab eventKey="comments" title="Comments">
+              <div className="pagination-wrap">
+                <div className="tableWrap">
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Flag count</th>
+                        <th scope="col">Accept / Reject</th>
                       </tr>
-                    ))}
-                </tbody>
-              </table>
-              <div>
-                <TablePagination
-                  component="div"
-                  count={comtdetails.length}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  rowsPerPage={rowsPerPage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                    </thead>
+                    <tbody>
+                      {comtdetails
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((a, b) => (
+                          <tr key={b} id={a.projectId}>
+                            <th scope="row">{b + 1}</th>
+                            <td>{a.firstName}</td>
+                            <td>{a.text}</td>
+                            <td>{a.flag}</td>
+                            <td>
+                              <div>
+                                <button
+                                  type="button"
+                                  className={
+                                    a.disable
+                                      ? "btn btn-success btn-sm"
+                                      : "btn btn-danger btn-sm"
+                                  }
+                                  onClick={() => {
+                                    qwerty(a);
+                                  }}
+                                >
+                                  {!a.disable
+                                    ? "Disable Comment"
+                                    : "Enable Comment"}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                  <div>
+                    <TablePagination
+                      component="div"
+                      count={comtdetails.length}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      rowsPerPage={rowsPerPage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </div>
+                  <FlagButton
+                    handleClose={handleClose}
+                    handleShow={handleShow}
+                    show={show}
+                    disable={disableVal}
+                    projectId={projectId}
+                    GetPro={GetPro}
+                  />
+                </div>
               </div>
-              <FlagButton
-                handleClose={handleClose}
-                handleShow={handleShow}
-                show={show}
-                disable={disableVal}
-                projectId={projectId}
-                GetPro={GetPro}
-              />
-            </div>
-          </div>
-        </Tab>
-        <Tab eventKey="subComments" title="Sub Comments">
-          <div className="pagination-wrap">
-            <div className="tableWrap">
-              <table className="table table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Comment</th>
-                    <th scope="col">Flag count</th>
-                    <th scope="col">Accept / Reject</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {subCommentDetails
-                    .slice(
-                      pageone * rowsPerPageone,
-                      pageone * rowsPerPageone + rowsPerPageone
-                    )
-                    .map((a, b) => (
-                      <tr key={b} id={a.projectId}>
-                        <th scope="row">{b + 1}</th>
-                        <td>{a.firstName}</td>
-                        <td>{a.text}</td>
-                        <td>{a.flag}</td>
-                        <td>
-                          <div>
-                            <button
-                              type="button"
-                              className={
-                                a.disable
-                                  ? "btn btn-success btn-sm"
-                                  : "btn btn-danger btn-sm"
-                              }
-                              onClick={() => {
-                                qwertyone(a);
-                              }}
-                            >
-                              {!a.disable
-                                ? "Disable Comment"
-                                : "Enable Comment"}
-                            </button>
-                          </div>
-                        </td>
+            </Tab>
+            <Tab eventKey="subComments" title="Sub Comments">
+              <div className="pagination-wrap">
+                <div className="tableWrap">
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Flag count</th>
+                        <th scope="col">Accept / Reject</th>
                       </tr>
-                    ))}
-                </tbody>
-              </table>
-              <div>
-                <TablePagination
-                  component="div"
-                  count={subCommentDetails.length}
-                  page={pageone}
-                  onPageChange={handleChangePageOne}
-                  rowsPerPage={rowsPerPageone}
-                  onRowsPerPageChange={handleChangeRowsPerPageOne}
-                />
+                    </thead>
+                    <tbody>
+                      {subCommentDetails
+                        .slice(
+                          pageone * rowsPerPageone,
+                          pageone * rowsPerPageone + rowsPerPageone
+                        )
+                        .map((a, b) => (
+                          <tr key={b} id={a.projectId}>
+                            <th scope="row">{b + 1}</th>
+                            <td>{a.firstName}</td>
+                            <td>{a.text}</td>
+                            <td>{a.flag}</td>
+                            <td>
+                              <div>
+                                <button
+                                  type="button"
+                                  className={
+                                    a.disable
+                                      ? "btn btn-success btn-sm"
+                                      : "btn btn-danger btn-sm"
+                                  }
+                                  onClick={() => {
+                                    qwertyone(a);
+                                  }}
+                                >
+                                  {!a.disable
+                                    ? "Disable Comment"
+                                    : "Enable Comment"}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                  <div>
+                    <TablePagination
+                      component="div"
+                      count={subCommentDetails.length}
+                      page={pageone}
+                      onPageChange={handleChangePageOne}
+                      rowsPerPage={rowsPerPageone}
+                      onRowsPerPageChange={handleChangeRowsPerPageOne}
+                    />
+                  </div>
+                  <FlagSubButton
+                    handleClose={handleCloseone}
+                    handleShow={handleShowone}
+                    show={showone}
+                    disable={disableVal}
+                    projectId={projectId}
+                    GetPro={GetPro}
+                  />
+                </div>
               </div>
-              <FlagSubButton
-                handleClose={handleCloseone}
-                handleShow={handleShowone}
-                show={showone}
-                disable={disableVal}
-                projectId={projectId}
-                GetPro={GetPro}
-              />
-            </div>
-          </div>
-        </Tab>
-      </Tabs>
-    </div>
-    }
-     
+            </Tab>
+          </Tabs>
+        </div>
+      }
+
     </>
   );
 };

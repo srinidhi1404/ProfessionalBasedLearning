@@ -4,16 +4,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import PublicNavbar from "./PublicNavbar";
+import { BASE_URL } from "../../constant/constant";
 const PublicProject = () => {
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViaW5qb2VAZ21haWwuY29tIiwiZmlyc3ROYW1lIjoiZWJpbiIsInNlY29uZE5hbWUiOiJqb2UiLCJpYXQiOjE2OTQ3NjA1NTd9.pkVVZVBUJjPYMTLHyjpPrPLLmDTCHXZnrumTjq-Iwy4";
   const [searchQuery, setSearchQuery] = useState("");
-  const userApi = "http://localhost:3000/admin/all/project";
-  const guestApi = "http://localhost:3000/api/all/project";
+  const userApi = `${BASE_URL}admin/all/project`;
   const [project, setProject] = useState([]);
-  const userType = localStorage.getItem("userType");
   const [filteredData, setFilteredData] = useState([]);
-  const [dataFromChild, setDataFromChild] = useState("");
+  const dataFromChild = ""
   const [mainLoader, setMainLoader] = useState(false);
 
   const navigate = useNavigate();
@@ -34,7 +33,7 @@ const PublicProject = () => {
       .catch((error) => {
         setMainLoader(false);
       });
-  }, [dataFromChild]);
+  }, [dataFromChild , userApi]);
 
   // const handleSearch = (e) => {
   //   const query = e.target.value;

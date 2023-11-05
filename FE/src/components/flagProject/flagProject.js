@@ -9,17 +9,17 @@ import Loader from "../Loader/Loader";
 import "../flagList/FlagList.css";
 const FlagProject = () => {
   const [show, setShow] = useState(false);
-  const [showone, setShowone] = useState(false);
   const [comtdetails, setcommentDetails] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
-  const [projectId, setProjectId] = useState("");
+  const projectId = ""
   const [mainLoader, setMainLoader] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const handleShowone = () => setShowone(true);
+
   useEffect(() => {
     GetPro();
+
   }, []);
 
   const handleChangePage = (event, newPage) => {

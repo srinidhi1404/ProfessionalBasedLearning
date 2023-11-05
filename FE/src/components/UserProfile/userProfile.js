@@ -4,9 +4,10 @@ import axios from "axios";
 import Table from "../Table/table";
 import Loader from "../Loader/Loader";
 import defaultImageLink from "../../asset/image/defaultProfile.jpeg";
+import { BASE_URL } from "../../constant/constant";
 const UserProfile = () => {
-  const userApi = "http://localhost:3000/student/student-details";
-  const guestApi = "http://localhost:3000/api/user-details";
+  const userApi = `${BASE_URL}student/student-details`;
+  const guestApi = `${BASE_URL}api/user-details`;
   const token = localStorage.getItem("token");
   const [GuestUserDetail, SetGuestUserDetail] = useState("");
   const [UserDetail, SetUserDetail] = useState("");
@@ -19,12 +20,6 @@ const UserProfile = () => {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
-
-  const userType = localStorage.getItem("userType");
-  useEffect(() => {
-    getDate();
-  }, []);
-
   const getDate = () => {
     if (userType === "guestUser") {
       setMainLoader(true);
@@ -60,6 +55,47 @@ const UserProfile = () => {
         });
     }
   };
+  const userType = localStorage.getItem("userType");
+  useEffect(() => {
+    const getDate = () => {
+      if (userType === "guestUser") {
+        setMainLoader(true);
+        axios
+          .get(guestApi, {
+            headers: {
+              token: token,
+            },
+          })
+          .then((response) => {
+            SetGuestUserDetail(response.data);
+            setImage(response.data.data.user.image);
+            setMainLoader(false);
+          })
+          .catch((error) => {
+            setMainLoader(false);
+          });
+      } else if (userType === "student") {
+        setMainLoader(true);
+        axios
+          .get(userApi, {
+            headers: {
+              token: token,
+            },
+          })
+          .then((response) => {
+            SetUserDetail(response.data);
+            setImage(response.data.data.user.image);
+            setMainLoader(false);
+          })
+          .catch((error) => {
+            setMainLoader(false);
+          });
+      }
+    };
+    getDate()
+  }, [guestApi , token , userApi , userType ] );
+
+
   const handlePicUploadGuest = async () => {
     try {
       const config = {
@@ -70,7 +106,7 @@ const UserProfile = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/api/add/image",
+        `${BASE_URL}api/add/image`,
         { image: selectedImage },
         config
       );
@@ -89,7 +125,7 @@ const UserProfile = () => {
     formData.append("image", e.target.files[0]);
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/upload/image`,
+        `${BASE_URL}api/upload/image`,
         formData
       );
 
@@ -120,7 +156,7 @@ const UserProfile = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/student/add/image",
+        `${BASE_URL}student/add/image`,
         { image: selectedImage },
         config
       );

@@ -21,7 +21,7 @@ const ResetPassword = ({ email, handleClose1 }) => {
 
   const handleChange = (e, name) => {
     if (name === "resetToken") {
-      setFormData({ ["resetToken"]: e });
+      setFormData({ resetToken: e });
     } else {
       const { name, value } = e.target;
       setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -36,13 +36,13 @@ const ResetPassword = ({ email, handleClose1 }) => {
     ) {
       return true;
     } else if (formData.resetToken.length !== 6) {
-      setErrors("Enter Otp Correctly");
+      setErrors("Enter OTP Correctly");
       return false;
     } else if (formData.newPassword === confirmPassword) {
-      setErrors("Password is not same");
+      setErrors("Password is not the same");
       return false;
-    } else if (formData.newPassword <= 3) {
-      setErrors("Password should be greater than 5 words");
+    } else if (formData.newPassword.length <= 5) {
+      setErrors("Password should be greater than 5 characters");
       return false;
     }
     return true;
@@ -53,7 +53,7 @@ const ResetPassword = ({ email, handleClose1 }) => {
 
     let val = await validate();
     if (val) {
-      setFormData({ ...formData, ["email"]: email });
+      setFormData({ ...formData, email: email });
       let payload = {
         newPassword: formData.newPassword,
         resetToken: formData.resetToken,
@@ -66,7 +66,7 @@ const ResetPassword = ({ email, handleClose1 }) => {
           content: response.message,
           style: { position: "absolute", top: "10", right: "0" },
         });
-        handleClose1(true)
+        handleClose1(true);
       } else {
         messageApi.open({
           type: "error",
@@ -93,7 +93,7 @@ const ResetPassword = ({ email, handleClose1 }) => {
         </div>
         <div className="form-group">
           <form onSubmit={(e) => handleSubmit1(e)}>
-            <label for="usr" style={{ marginBottom: "10px" }}>
+            <label htmlFor="usr" style={{ marginBottom: "10px" }}>
               Enter OTP
             </label>
             <OTPInput
@@ -108,7 +108,7 @@ const ResetPassword = ({ email, handleClose1 }) => {
               className="otp-input"
             />
             <label
-              for="usr"
+              htmlFor="usr"
               style={{ marginBottom: "10px", marginTop: "10px" }}
             >
               Enter New Password
@@ -123,7 +123,7 @@ const ResetPassword = ({ email, handleClose1 }) => {
               value={formData.newPassword}
             />
             <label
-              for="usr"
+              htmlFor="usr"
               style={{ marginBottom: "10px", marginTop: "10px" }}
             >
               Confirm Password
@@ -151,76 +151,6 @@ const ResetPassword = ({ email, handleClose1 }) => {
         </div>
         <div className="col"></div>
       </div>
-      {/* <Modal
-        show={show1}
-        onHide={handleClose1}
-        backdrop="static"
-        keyboard={false}
-        marginRight="10px"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Reset Password</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="form-group">
-            <form onSubmit={(e) => handleSubmit1(e)}>
-              <label for="usr" style={{ marginBottom: "10px" }}>
-                Enter OTP
-              </label>
-              <OTPInput
-                value={formData.resetToken}
-                onChange={(e) => {
-                  handleChange(e, "resetToken");
-                }}
-                autoFocus
-                OTPLength={6}
-                otpType="number"
-                disabled={false}
-              />
-              <label
-                for="usr"
-                style={{ marginBottom: "10px", marginTop: "10px" }}
-              >
-                Enter New Password
-              </label>
-              <input
-                type="password"
-                name="newPassword"
-                className="form-control rounded-pill"
-                id="usr"
-                placeholder="Enter New Password"
-                onChange={handleChange}
-                value={formData.newPassword}
-              />
-              <label
-                for="usr"
-                style={{ marginBottom: "10px", marginTop: "10px" }}
-              >
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                name="ConfirmPassword"
-                className="form-control rounded-pill"
-                id="usr"
-                placeholder="Confirm Password"
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
-                value={confirmPassword}
-              />
-              <Button
-                variant="primary rounded-pill "
-                style={{ marginRight: "330px", marginTop: "10px" }}
-                type="submit"
-              >
-                Reset Password
-              </Button>
-            </form>
-          </div>
-          <div className="col"></div>
-        </Modal.Body>
-      </Modal> */}
     </>
   );
 };

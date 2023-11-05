@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import PropTypes from "prop-types";
 import "./ProjectComments.css";
-
+import {BASE_URL} from "../../constant/constant"
 const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -21,21 +21,21 @@ const ProjectComments = ({ dummyComments, sendDataToParent, projectId }) => {
   const [openReplyInput, setOpenReplyInput] = useState(null);
   const totalComments = (dummyComments || []).filter((b) => b.disable !== 1).length;
   const [commentOwnerFirstName, setCommentOwnerFirstName] = useState("");
-  let postParentCommentURL = "http://localhost:3000/api/add/comment";
-  let postSubCommentURL = "http://localhost:3000/api/add/sub-comment";
-  let flagComment = "http://localhost:3000/api/flag/comment";
-  let flagsubComment = "http://localhost:3000/api/flag/sub-comment";
+  let postParentCommentURL = `${BASE_URL}api/add/comment`;
+  let postSubCommentURL = `${BASE_URL}api/add/sub-comment`;
+  let flagComment = `${BASE_URL}api/flag/comment`;
+  let flagsubComment = `${BASE_URL}api/flag/sub-comment`;
 
   if (usertype === "student") {
-    postParentCommentURL = "http://localhost:3000/student/add/comment";
-    postSubCommentURL = "http://localhost:3000/student/add/sub-comment";
-    flagComment = "http://localhost:3000/api/flag/comment";
-    flagsubComment = "http://localhost:3000/api/flag/sub-comment";
+    postParentCommentURL = `${BASE_URL}student/add/comment`;
+    postSubCommentURL = `${BASE_URL}student/add/sub-comment`;
+    flagComment = `${BASE_URL}api/flag/comment`;
+    flagsubComment = `${BASE_URL}api/flag/sub-comment`;
   } else if (usertype === "guestUser") {
-    postParentCommentURL = "http://localhost:3000/api/add/comment";
-    postSubCommentURL = "http://localhost:3000/api/add/sub-comment";
-    flagComment = "http://localhost:3000/api/flag/comment";
-    flagsubComment = "http://localhost:3000/api/flag/sub-comment";
+    postParentCommentURL = `${BASE_URL}api/add/comment`;
+    postSubCommentURL = `${BASE_URL}api/add/sub-comment`;
+    flagComment = `${BASE_URL}api/flag/comment`;
+    flagsubComment = `${BASE_URL}api/flag/sub-comment`;
   }
 
   const toggleDrawer = (isOpen) => (event) => {

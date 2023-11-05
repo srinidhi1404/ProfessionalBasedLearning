@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Modal, Box, Typography, Button, TextField } from "@mui/material";
-import { Close as CloseIcon } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { message } from "antd";
+import { BASE_URL } from "../../constant/constant";
 const ProjectRequestModal = ({
   open,
   onClose,
@@ -17,6 +17,7 @@ const ProjectRequestModal = ({
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
   const [pdfFile, setPdfFile] = useState("");
+  console.log(pdfFile)
   const [messageApi, contextHolder] = message.useMessage();
   const [values, setValues] = useState({
     projectTitle: projectTitle,
@@ -54,7 +55,7 @@ const ProjectRequestModal = ({
     formData.append("image", e.target.files[0]);
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/upload/image`,
+        `${BASE_URL}api/upload/image`,
         formData
       );
 
@@ -115,7 +116,7 @@ const ProjectRequestModal = ({
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("http://localhost:3000/api/post/request", {
+        const response = await fetch(`${BASE_URL}api/post/request`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -171,11 +172,7 @@ const ProjectRequestModal = ({
             <Typography id="modal-title" variant="h6" component="div">
               Request Project
             </Typography>
-            <Button
-              startIcon={<CloseIcon style={{ color: "#006747" }} />}
-              onClick={onClose}
-              className="closeBtn"
-            />
+    
           </div>
           <TextField
             label="First Name"

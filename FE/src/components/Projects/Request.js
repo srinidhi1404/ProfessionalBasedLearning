@@ -31,17 +31,6 @@ const Request = () => {
     setPage(0);
   };
 
-  const handleDocumentDownload = (documentUrl) => {
-    const link = document.createElement("a");
-    link.href = documentUrl;
-    link.setAttribute("download", "document.pdf"); 
-    link.style.display = "none";
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-  };
 
   const GetPro = async () => {
     setMainLoader(true)

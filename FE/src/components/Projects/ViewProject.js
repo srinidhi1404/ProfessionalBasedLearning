@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { Button } from "@mui/material";
 import { BsFlagFill } from "react-icons/bs";
 import "./ViewProject.css";
 import ProjectRequestModal from "./ProjectRequestModal ";
-
+import { BASE_URL } from "../../constant/constant";
 const ViewProject = () => {
   const location = useLocation();
   let userEmail = localStorage.getItem("email");
@@ -39,7 +39,7 @@ const ViewProject = () => {
         flag: true,
       };
       axios
-        .post("http://localhost:3000/api/flag/project", flagCommentData)
+        .post(`${BASE_URL}api/flag/project`, flagCommentData)
         .then((response) => {
           if (response.status) {
             setshowflagtoast(true);

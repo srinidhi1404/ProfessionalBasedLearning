@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import {  Row, Col, Form, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Signup.css";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +33,7 @@ const SignupForm = () => {
   const [verifyOtp, setVerifyOTP] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [password, setPassword] = useState("");
+  console.log(password)
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };

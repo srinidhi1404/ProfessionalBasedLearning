@@ -6,11 +6,12 @@ import COMMentImg from "../../asset/image/coom.png";
 import ProjectComments from "../ProjectComments/ProjectComments";
 import defaultImageLink from "../../asset/image/newdummyprofile";
 import Loader from "../Loader/Loader";
+import { BASE_URL } from "../../constant/constant";
 const Projects = () => {
   const token = localStorage.getItem("token");
   const [searchQuery, setSearchQuery] = useState("");
-  const userApi = "http://localhost:3000/student/all/project";
-  const guestApi = "http://localhost:3000/api/all/project";
+  const userApi = `${BASE_URL}student/all/project`;
+  const guestApi = `${BASE_URL}api/all/project`;
   const [project, setProject] = useState([]);
   const userType = localStorage.getItem("userType");
   const [filteredData, setFilteredData] = useState([]);
@@ -18,7 +19,7 @@ const Projects = () => {
   const [mainLoader, setMainLoader] = useState(false);
   const [state, setState] = useState(true);
   const navigate = useNavigate();
-  const [initialLoad, setInitialLoad] = useState(true);
+  const initialLoad = true
   const [showReplyInput, setShowReplyInput] = useState(
     new Array(filteredData?.length).fill(false)
   );
@@ -69,32 +70,32 @@ const Projects = () => {
           setMainLoader(false);
         });
     }
-  }, [dataFromChild, initialLoad]);
+  }, [dataFromChild, initialLoad , guestApi , token , userApi , userType]);
 
-//   const handleSearch = (e) => {
-//     const query = e.target.value;
-//     setSearchQuery(query);
-// console.log(project.keywords , "filteredResults")
-//     const filteredResults = project.filter((item) =>
-//       item.projectTitle.toLowerCase().includes(query.toLowerCase())
-//     );
+  //   const handleSearch = (e) => {
+  //     const query = e.target.value;
+  //     setSearchQuery(query);
+  // console.log(project.keywords , "filteredResults")
+  //     const filteredResults = project.filter((item) =>
+  //       item.projectTitle.toLowerCase().includes(query.toLowerCase())
+  //     );
 
-//     setFilteredData(filteredResults);
-//   };
+  //     setFilteredData(filteredResults);
+  //   };
 
-const handleSearch = (e) => {
-  const query = e.target.value;
-  setSearchQuery(query);
-  const filteredResults = project.filter((item) => {
-    const lowercaseKeywords = item.keywords.join(' ').toLowerCase();
-    return (
-      item.projectTitle.toLowerCase().includes(query.toLowerCase()) ||
-      lowercaseKeywords.includes(query.toLowerCase())
-    );
-  });
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    const filteredResults = project.filter((item) => {
+      const lowercaseKeywords = item.keywords.join(' ').toLowerCase();
+      return (
+        item.projectTitle.toLowerCase().includes(query.toLowerCase()) ||
+        lowercaseKeywords.includes(query.toLowerCase())
+      );
+    });
 
-  setFilteredData(filteredResults);
-};
+    setFilteredData(filteredResults);
+  };
 
 
   const onCLickSpecific = (item) => {

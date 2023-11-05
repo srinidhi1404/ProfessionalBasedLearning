@@ -14,13 +14,13 @@ const formDetails = {
 
 const ForgotPasswordForm = ({
   show,
-  handleShow,
   handleClose,
   showResetPassword,
   setShowResetPassword,
 }) => {
   const [formData, setFormData] = useState({ ...formDetails });
   const [errors, setErrors] = useState({});
+  console.log(errors)
   const [messageApi, contextHolder] = message.useMessage();
 
   const [show1, setShow] = useState(false);
