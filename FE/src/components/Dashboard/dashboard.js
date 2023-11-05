@@ -13,6 +13,9 @@ const Dashboard = () => {
       title: "User Details here",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/user-profile");
           }}
@@ -35,7 +38,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative"> GO TO User Details</span>
+          <span className="relative"> Go To User Details</span>
         </div>
       ),
     },
@@ -44,6 +47,9 @@ const Dashboard = () => {
       title: "Post a details of the project",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/project-form");
           }}
@@ -66,7 +72,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative">POST A NEW PROJECT</span>
+          <span className="relative">Post a New Project</span>
         </div>
       ),
     },
@@ -75,6 +81,9 @@ const Dashboard = () => {
       title: "View Projects here",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/projects");
           }}
@@ -97,7 +106,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative"> GO TO Projects</span>
+          <span className="relative"> Go To Projects</span>
         </div>
       ),
     },
@@ -106,6 +115,9 @@ const Dashboard = () => {
       title: "View Requests here",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/request");
           }}
@@ -128,7 +140,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative"> GO TO Projects</span>
+          <span className="relative"> Go To Projects</span>
         </div>
       ),
     },
@@ -139,6 +151,9 @@ const Dashboard = () => {
       title: "Approve / Reject Projects",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/project-list");
           }}
@@ -161,7 +176,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative"> GO TO Projects List</span>
+          <span className="relative"> Go To Projects List</span>
         </div>
       ),
     },
@@ -170,6 +185,9 @@ const Dashboard = () => {
       title: "Approve / Reject flag Comment",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/flagList");
           }}
@@ -192,7 +210,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative"> GO TO flag List</span>
+          <span className="relative"> Go To Flag List</span>
         </div>
       ),
     },
@@ -201,6 +219,9 @@ const Dashboard = () => {
       title: " Flag Project",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/flagProject");
           }}
@@ -223,7 +244,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative"> GO TO flag List</span>
+          <span className="relative"> Go To Flag List</span>
         </div>
       ),
     },
@@ -232,6 +253,9 @@ const Dashboard = () => {
       title: "Approve / Reject Flag User",
       title2: (
         <div
+        style={{
+          backgroundColor: "#006747"
+        }}
           onClick={() => {
             navigate("/flagUser");
           }}
@@ -254,7 +278,7 @@ const Dashboard = () => {
               ></path>
             </svg>
           </span>
-          <span className="relative"> GO TO flag List</span>
+          <span className="relative"> Go To Flag List</span>
         </div>
       ),
     },
