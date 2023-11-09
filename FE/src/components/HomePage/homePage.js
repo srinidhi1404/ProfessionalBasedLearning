@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import LionIMg from "../../asset/image/lionimg.webp"
+import LionIMg from "../../asset/image/lionimg.jpg"
 import "./homepage.css";
 import Footer from "../Footer/footer";
 import PublicNavbar from "../PublicNavbar/PublicNavbar";
@@ -35,7 +35,7 @@ const HomePage = () => {
         <PublicNavbar/>
         <div className="loginbtncon">
           <div className="left_lion">
-            <img src={LionIMg} alt="cat"></img>
+            <img src={LionIMg} alt=""></img>
         </div>
           <div className="right-btns">
 
