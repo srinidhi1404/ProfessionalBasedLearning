@@ -35,7 +35,7 @@ const HomePage = () => {
         <PublicNavbar/>
         <div className="loginbtncon">
           <div className="left_lion">
-            <img src={LionIMg} alt=""></img>
+            <img src={LionIMg} alt="cat"></img>
         </div>
           <div className="right-btns">
 
