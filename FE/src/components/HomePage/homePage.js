@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import LionIMg from "../../asset/image/lionimg.jpg"
+import LionIMg from "../../asset/image/lionimg.webp"
 import "./homepage.css";
 import Footer from "../Footer/footer";
 import PublicNavbar from "../PublicNavbar/PublicNavbar";
