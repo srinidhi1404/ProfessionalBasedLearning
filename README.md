@@ -1,11 +1,13 @@
 # ProffesionalBasedLearning
 
-Hosted at: https://professional-based-learning-qene.vercel.app/
+Hosted at: 
 
-DB credentials
-Link to Access DB: https://www.db4free.net/phpMyAdmin/
-Id: dgp1db
-Password: august@2023
+Vercel: https://professional-based-learning-qene.vercel.app/
+
+AWS Amplify: https://main.d3aeevgirrfut6.amplifyapp.com/
+
+
+
 
 #### Admin Login
 Id: admin@gmail.com
