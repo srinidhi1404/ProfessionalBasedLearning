@@ -1,2 +1,2 @@
-export const BASE_URL = " http://localhost:3000/"
+export const BASE_URL = "https://professional-based-learning.vercel.app/"
 //https://dgp-ebinjoe.onrender.com/
