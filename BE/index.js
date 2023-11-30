@@ -8,11 +8,17 @@ const admin = require("./router/admin");
 const meta = require("./router/meta");
 const fileupload = require("express-fileupload");
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 const {
   S3
 } = require("@aws-sdk/client-s3");
 const s3 = new S3();
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 
 const port = 3000;
@@ -31,7 +37,10 @@ app.use("/admin", admin);
 app.get("/", (req, res) => res.send("running"));
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 // curl -i https://some-app.cyclic.app/myFile.txt
 app.get("*", async (req, res) => {
   let filename = req.path.slice(1);
@@ -93,6 +102,9 @@ app.use("*", (req, res) => {
   res.sendStatus(404).end();
 });
 
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 app.listen(port, () => {
   console.log(`local server started on http://localhost:${port}`);

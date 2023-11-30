@@ -59,7 +59,11 @@ const LoginForm = () => {
     if (Object.keys(errors).length === 0) {
       if (userType === "guestUser") {
 <<<<<<< HEAD
+<<<<<<< HEAD
         let response = await fetchApi("api/login", formData, "POST");
+=======
+        let response = await fetchApi("/api/login", formData, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
         let response = await fetchApi("/api/login", formData, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -79,7 +83,11 @@ const LoginForm = () => {
         }
       } else if (userType === "student") {
 <<<<<<< HEAD
+<<<<<<< HEAD
         let response = await fetchApi("student/login", formData, "POST");
+=======
+        let response = await fetchApi("/student/login", formData, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
         let response = await fetchApi("/student/login", formData, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -99,7 +107,11 @@ const LoginForm = () => {
         }
       } else if (userType === "admin") {
 <<<<<<< HEAD
+<<<<<<< HEAD
         let response = await fetchApi("admin/login", formData, "POST");
+=======
+        let response = await fetchApi("/admin/login", formData, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
         let response = await fetchApi("/admin/login", formData, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

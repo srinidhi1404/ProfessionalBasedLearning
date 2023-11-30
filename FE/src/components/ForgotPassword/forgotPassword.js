@@ -63,7 +63,11 @@ const ForgotPasswordForm = ({
     }
     if (Object.keys(newErrors).length === 0) {
 <<<<<<< HEAD
+<<<<<<< HEAD
       let response = await fetchApi("api/forgotpassword", formData, "POST");
+=======
+      let response = await fetchApi("/api/forgotpassword", formData, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
       let response = await fetchApi("/api/forgotpassword", formData, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

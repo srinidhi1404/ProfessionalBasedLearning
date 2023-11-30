@@ -1,8 +1,13 @@
 export const fetchApi = async (endpoint, body, method) => {
   let auth = localStorage.getItem("token");
 <<<<<<< HEAD
+<<<<<<< HEAD
 //https://gorgeous-hosiery-yak.cyclic.app/
   let baseUrl = "http://localhost:3000/";
+=======
+
+  let baseUrl = "https://gorgeous-hosiery-yak.cyclic.app/";
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 
   let baseUrl = "https://gorgeous-hosiery-yak.cyclic.app/";

@@ -10,7 +10,11 @@ const FlagButton = ({ show, handleClose, projectId, GetPro, disable }) => {
       disable: arg,
     };
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("admin/disable/comment", payload, "POST");
+=======
+    let response = await fetchApi("/admin/disable/comment", payload, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/admin/disable/comment", payload, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

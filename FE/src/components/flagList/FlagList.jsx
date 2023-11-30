@@ -74,7 +74,11 @@ const FlagList = () => {
     };
     let response = await fetchApi(
 <<<<<<< HEAD
+<<<<<<< HEAD
       "admin/disable/sub-comment",
+=======
+      "/admin/disable/sub-comment",
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
       "/admin/disable/sub-comment",
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -89,7 +93,11 @@ const FlagList = () => {
   const GetPro = async () => {
     setMainLoader(true)
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("admin/all/comments", "", "GET");
+=======
+    let response = await fetchApi("/admin/all/comments", "", "GET");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/admin/all/comments", "", "GET");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -112,7 +120,11 @@ const FlagList = () => {
       disable: a.disable ? false : true,
     };
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("admin/disable/comment", payload, "POST");
+=======
+    let response = await fetchApi("/admin/disable/comment", payload, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/admin/disable/comment", payload, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

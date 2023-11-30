@@ -29,7 +29,11 @@ const FlagList = () => {
 
   const GetPro = async () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("admin/flag-user", "", "GET");
+=======
+    let response = await fetchApi("/admin/flag-user", "", "GET");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/admin/flag-user", "", "GET");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

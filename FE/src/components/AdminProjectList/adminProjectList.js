@@ -26,7 +26,11 @@ const AdminProjectList = () => {
   const [filteredExpiredProjects, setFilteredExpiredProjects] = useState([]);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   console.log(filteredActiveProjects , "filteredActiveProjects")
+=======
+  
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
   
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -53,17 +57,23 @@ const AdminProjectList = () => {
     };
     handleSearch();
 <<<<<<< HEAD
+<<<<<<< HEAD
   }, [searchText]);
 
   const GetPro = async () => {
     setMainLoader(true)
     let response = await fetchApi("admin/all/project", "", "GET");
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
   });
 
   const GetPro = async () => {
     setMainLoader(true)
     let response = await fetchApi("/admin/all/project", "", "GET");
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
     if (response.status) {
       const currentDate = moment();
@@ -177,7 +187,10 @@ const AdminProjectList = () => {
                     <th scope="col">Authors Name</th>
                     <th scope="col">Title</th>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <th scope="col">Posted by</th>
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
                     <th scope="col">Status</th>
@@ -194,7 +207,10 @@ const AdminProjectList = () => {
                           <td>{a.firstName}</td>
                           <td>{a.projectTitle}</td>
 <<<<<<< HEAD
+<<<<<<< HEAD
                           <td>{a.projectTitle}</td>
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
                           <td>
@@ -211,7 +227,11 @@ const AdminProjectList = () => {
                               <button
                                 type="button"
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 className={`adminviewbtn ${a.status !== "PENDING" ? 'disabledButton' : ''}`}
+=======
+                                className="adminviewbtn"
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                                 className="adminviewbtn"
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -234,7 +254,10 @@ const AdminProjectList = () => {
                           <td>{a.firstName}</td>
                           <td>{a.projectTitle}</td>
 <<<<<<< HEAD
+<<<<<<< HEAD
                           <td>{a.projectTitle}</td>
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
                           <td>
@@ -245,7 +268,11 @@ const AdminProjectList = () => {
                               <button
                                 type="button"
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 className={`adminviewbtn ${a.status !== "PENDING" ? 'disabledButton' : ''}`}
+=======
+                                className="adminviewbtn"
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                                 className="adminviewbtn"
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

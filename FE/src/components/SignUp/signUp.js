@@ -75,7 +75,11 @@ const SignupForm = () => {
     if (Object.keys(newErrors).length === 0) {
       try {
 <<<<<<< HEAD
+<<<<<<< HEAD
         let response = await fetchApi("api/signup", formData, "POST");
+=======
+        let response = await fetchApi("/api/signup", formData, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
         let response = await fetchApi("/api/signup", formData, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -106,7 +110,11 @@ const SignupForm = () => {
   const getVerifyOtp = async (e) => {
     e.preventDefault();
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("api/send/otp", emailverify, "POST");
+=======
+    let response = await fetchApi("/api/send/otp", emailverify, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/api/send/otp", emailverify, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

@@ -2,10 +2,15 @@ import React from "react";
 import moment from "moment";
 import "./table.css";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 const Table = ({ data }) => {
 console.log(data)
   const navigate = useNavigate()
+=======
+
+const Table = ({ data }) => {
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 
 const Table = ({ data }) => {
@@ -19,7 +24,10 @@ const Table = ({ data }) => {
           <th>Start Date</th>
           <th>End Date</th>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <th>Status</th>
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         </tr>
@@ -42,7 +50,10 @@ const Table = ({ data }) => {
               {moment(item.endDate).format("MM-DD-YYYY")}
             </td>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <td><button   className={`adminviewbtn ${item.status == "PENDING" ? 'disabledButton' : ''}`} onClick={()=> navigate("/project-form", { state: { item } })}>Edit</button></td>
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           </tr>

@@ -85,6 +85,7 @@ const getAllProjects = async (req, res) => {
     const email = req.data.id;
     const selectQuery = `
 <<<<<<< HEAD
+<<<<<<< HEAD
     SELECT * FROM projects`;
     const [projects] = await pool.query(selectQuery);
     const studentQuery = `
@@ -140,6 +141,8 @@ const exploreProjects = async (req, res) => {
   try {
     const email = req.data.id;
     const selectQuery = `
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
     SELECT * FROM projects
@@ -455,7 +458,10 @@ module.exports = {
   disableUser,
   getAllUsers,
 <<<<<<< HEAD
+<<<<<<< HEAD
   exploreProjects,
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 };

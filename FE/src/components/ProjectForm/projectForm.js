@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
+=======
+import React, { useState } from "react";
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 import React, { useState } from "react";
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -8,7 +12,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./projectForm.css";
 import { fetchApi } from "../../Utils/Request";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useNavigate, useLocation } from "react-router-dom";
+=======
+import { useNavigate } from "react-router-dom";
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 import { useNavigate } from "react-router-dom";
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -18,7 +26,10 @@ import moment from "moment";
 import { message } from "antd";
 import { BASE_URL } from "../../constant/constant";
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 const formDetails = {
@@ -56,7 +67,10 @@ const ProjectForm = () => {
   const [fileName, setFileName] = useState("");
   const [imgError, setImageError] = useState(false);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [selectedOptions, setSelectedOptions] = useState([]);
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
   const [messageApi, contextHolder] = message.useMessage();
@@ -72,9 +86,12 @@ const ProjectForm = () => {
   });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   const location = useLocation();
   const { item } = location.state || {};
   console.log(item , "iuoghoi")
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
   const options = [
@@ -82,6 +99,7 @@ const ProjectForm = () => {
     { value: false, label: "Private" },
   ];
 
+<<<<<<< HEAD
 <<<<<<< HEAD
   useEffect(() => {
     if (item) {
@@ -115,6 +133,11 @@ const ProjectForm = () => {
     const { name, value } = e.target;
     console.log(name, value);
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 
     if (name === "keywords") {
       setFormData((prevData) => ({
@@ -135,7 +158,11 @@ const ProjectForm = () => {
 
     setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
   
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -159,12 +186,15 @@ const ProjectForm = () => {
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   const uploadFile = async (e) => {
     setLoading(true);
     let formData = new FormData();
     formData.append("image", e.target.files[0]);
     let u = await axios.post(`${BASE_URL}api/upload/image`, formData);
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
   const uploadImage = async (e) => {
     setLoading(true);
     let formData = new FormData();
@@ -173,6 +203,9 @@ const ProjectForm = () => {
       `${BASE_URL}api/upload/image`,
       formData
     );
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
     if (u.data.status) {
       setImageError(false);
@@ -209,6 +242,7 @@ const ProjectForm = () => {
 
     let userType = localStorage.getItem("userType");
     let payload = { ...formData };
+<<<<<<< HEAD
 <<<<<<< HEAD
     let obj = {keywords: selectedOptions.map((val)=>val.value)}
     let editPayload = {...formData ,...obj}
@@ -274,6 +308,8 @@ const ProjectForm = () => {
       
     
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
     payload.document = pdfFile;
     if (userType === "guestUser") {
       let response = await fetchApi("/api/add/project", payload, "POST");
@@ -306,6 +342,9 @@ const ProjectForm = () => {
         });
       }
     }
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
   };
 
@@ -317,7 +356,10 @@ const ProjectForm = () => {
     setPasswordVisible1(!passwordVisible1);
   };
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
   function getCurrentDate() {
@@ -335,7 +377,11 @@ const ProjectForm = () => {
         <div className="div2">
           <div className="div3">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <h1>{item ? "Edit Project" : "Post a New Project"}</h1>
+=======
+            <h1>Post a New Project</h1>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
             <h1>Post a New Project</h1>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -348,8 +394,14 @@ const ProjectForm = () => {
                   type="text"
                   id="form2Example1"
 <<<<<<< HEAD
+<<<<<<< HEAD
                   className={`form-control ${fieldErrors.projectTitle && "is-invalid"
                     }`}
+=======
+                  className={`form-control ${
+                    fieldErrors.projectTitle && "is-invalid"
+                  }`}
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                   className={`form-control ${
                     fieldErrors.projectTitle && "is-invalid"
@@ -376,8 +428,14 @@ const ProjectForm = () => {
                   type="text"
                   id="form2Example2"
 <<<<<<< HEAD
+<<<<<<< HEAD
                   className={`form-control ${fieldErrors.projectDescription && "is-invalid"
                     }`}
+=======
+                  className={`form-control ${
+                    fieldErrors.projectDescription && "is-invalid"
+                  }`}
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                   className={`form-control ${
                     fieldErrors.projectDescription && "is-invalid"
@@ -403,8 +461,14 @@ const ProjectForm = () => {
                     type={passwordVisible ? "date" : "text"}
                     id="form2Example2"
 <<<<<<< HEAD
+<<<<<<< HEAD
                     className={`form-control ${fieldErrors.startDate && "is-invalid"
                       }`}
+=======
+                    className={`form-control ${
+                      fieldErrors.startDate && "is-invalid"
+                    }`}
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                     className={`form-control ${
                       fieldErrors.startDate && "is-invalid"
@@ -436,7 +500,11 @@ const ProjectForm = () => {
                 </div>
               </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+             
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
              
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -447,8 +515,14 @@ const ProjectForm = () => {
                     type={passwordVisible1 ? "date" : "text"}
                     id="form2Example2"
 <<<<<<< HEAD
+<<<<<<< HEAD
                     className={`form-control ${fieldErrors.endDate && "is-invalid"
                       }`}
+=======
+                    className={`form-control ${
+                      fieldErrors.endDate && "is-invalid"
+                    }`}
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                     className={`form-control ${
                       fieldErrors.endDate && "is-invalid"
@@ -490,8 +564,14 @@ const ProjectForm = () => {
                     type="number"
                     id="form2Example2"
 <<<<<<< HEAD
+<<<<<<< HEAD
                     className={`form-control ${fieldErrors.contactNumber && "is-invalid"
                       }`}
+=======
+                    className={`form-control ${
+                      fieldErrors.contactNumber && "is-invalid"
+                    }`}
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                     className={`form-control ${
                       fieldErrors.contactNumber && "is-invalid"
@@ -519,8 +599,14 @@ const ProjectForm = () => {
                   type="text"
                   id="form2Example2"
 <<<<<<< HEAD
+<<<<<<< HEAD
                   className={`form-control ${fieldErrors.projectSummary && "is-invalid"
                     }`}
+=======
+                  className={`form-control ${
+                    fieldErrors.projectSummary && "is-invalid"
+                  }`}
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                   className={`form-control ${
                     fieldErrors.projectSummary && "is-invalid"
@@ -549,17 +635,23 @@ const ProjectForm = () => {
                   value={formData.projectType}
                   name="projectType"
 <<<<<<< HEAD
+<<<<<<< HEAD
                   className={`form-control ${fieldErrors.projectType && "is-invalid"
                     }`}
                 >
                   {!item ? <option value="">Select</option> : ""}
 
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
                   className={`form-control ${
                     fieldErrors.projectType && "is-invalid"
                   }`}
                 >
                   <option value="">Select</option>
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
                   {options.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -582,6 +674,7 @@ const ProjectForm = () => {
                   options={keyWords}
                   isMulti
 <<<<<<< HEAD
+<<<<<<< HEAD
                   value={selectedOptions}
                   isOptionDisabled={(option) => selectedOptions.length >= 5 && !selectedOptions.some((selected) => selected.value === option.value)}
                   onChange={(selectedOptions) => {
@@ -594,11 +687,16 @@ const ProjectForm = () => {
                         name: "keywords",
                         value: limitedSelection.map((option) => option.value),
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
                   onChange={(selectedOptions) => {
                     handleChange({
                       target: {
                         name: "keywords",
                         value: selectedOptions.map((option) => option.value),
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
                       },
                     });
@@ -614,7 +712,11 @@ const ProjectForm = () => {
                   id="upload"
                   hidden
 <<<<<<< HEAD
+<<<<<<< HEAD
                   onChange={(e) => uploadFile(e)}
+=======
+                  onChange={(e) => uploadImage(e)}
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                   onChange={(e) => uploadImage(e)}
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -632,6 +734,7 @@ const ProjectForm = () => {
 
               <button type="submit" className="btn btn-primary " id="LogIn">
 <<<<<<< HEAD
+<<<<<<< HEAD
                 {
                   item ? "update" : "Submit"
                 }
@@ -640,6 +743,11 @@ const ProjectForm = () => {
             </form>
 
 
+=======
+                Submit
+              </button>
+            </form>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
                 Submit
               </button>
@@ -654,6 +762,9 @@ const ProjectForm = () => {
 
 export default ProjectForm;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

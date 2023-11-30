@@ -11,7 +11,11 @@ const FlagSubButton = ({ show, handleClose, projectId, GetPro, disable }) => {
     };
     let response = await fetchApi(
 <<<<<<< HEAD
+<<<<<<< HEAD
       "admin/disable/sub-comment",
+=======
+      "/admin/disable/sub-comment",
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
       "/admin/disable/sub-comment",
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

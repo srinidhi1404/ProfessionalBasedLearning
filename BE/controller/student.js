@@ -21,10 +21,14 @@ const login = async (req, res) => {
         const userData = results[0];
         if (userData.disable) {
 <<<<<<< HEAD
+<<<<<<< HEAD
           res.json({
             message: "You have been blocked by the Admin",
             status: false,
           });
+=======
+          res.json({ message: "Student is disabled", status: false });
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           res.json({ message: "Student is disabled", status: false });
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

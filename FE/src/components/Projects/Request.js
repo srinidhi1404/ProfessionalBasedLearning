@@ -35,7 +35,11 @@ const Request = () => {
   const GetPro = async () => {
     setMainLoader(true)
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("api/get/request", "", "GET");
+=======
+    let response = await fetchApi("/api/get/request", "", "GET");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/api/get/request", "", "GET");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

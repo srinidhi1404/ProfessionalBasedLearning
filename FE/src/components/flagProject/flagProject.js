@@ -37,7 +37,11 @@ const FlagProject = () => {
       disable: a.disable ? false : true,
     };
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("api/disable/project", payload, "POST");
+=======
+    let response = await fetchApi("/api/disable/project", payload, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/api/disable/project", payload, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -50,7 +54,11 @@ const FlagProject = () => {
   const GetPro = async () => {
     setMainLoader(true);
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("admin/all/project", "", "GET");
+=======
+    let response = await fetchApi("/admin/all/project", "", "GET");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/admin/all/project", "", "GET");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

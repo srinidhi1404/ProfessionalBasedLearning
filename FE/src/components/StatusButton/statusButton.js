@@ -10,7 +10,11 @@ const StatusButton = ({ show, handleClose, projectId, GetPro }) => {
       status: arg,
     };
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response = await fetchApi("admin/approve", payload, "POST");
+=======
+    let response = await fetchApi("/admin/approve", payload, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
     let response = await fetchApi("/admin/approve", payload, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

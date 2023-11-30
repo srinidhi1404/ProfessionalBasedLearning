@@ -14,11 +14,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/user-profile");
@@ -43,7 +49,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative"> GO TO User Details</span>
+=======
+          <span className="relative"> Go To User Details</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative"> Go To User Details</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -56,11 +66,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/project-form");
@@ -85,7 +101,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative">POST A NEW PROJECT</span>
+=======
+          <span className="relative">Post a New Project</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative">Post a New Project</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -98,11 +118,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/projects");
@@ -127,7 +153,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative"> GO TO Projects</span>
+=======
+          <span className="relative"> Go To Projects</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative"> Go To Projects</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -140,11 +170,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/request");
@@ -169,7 +205,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative"> GO TO Projects</span>
+=======
+          <span className="relative"> Go To Projects</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative"> Go To Projects</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -184,11 +224,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/project-list");
@@ -213,7 +259,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative"> GO TO Projects List</span>
+=======
+          <span className="relative"> Go To Projects List</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative"> Go To Projects List</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -226,11 +276,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/flagList");
@@ -255,7 +311,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative"> GO TO flag List</span>
+=======
+          <span className="relative"> Go To Flag List</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative"> Go To Flag List</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -268,11 +328,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/flagProject");
@@ -297,7 +363,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative"> GO TO flag List</span>
+=======
+          <span className="relative"> Go To Flag List</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative"> Go To Flag List</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
@@ -310,11 +380,17 @@ const Dashboard = () => {
       title2: (
         <div
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
         style={{
           backgroundColor: "#006747",
           color: "white"
         }}
+<<<<<<< HEAD
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
+=======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
           onClick={() => {
             navigate("/flagUser");
@@ -339,7 +415,11 @@ const Dashboard = () => {
             </svg>
           </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span className="relative"> GO TO flag List</span>
+=======
+          <span className="relative"> Go To Flag List</span>
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
           <span className="relative"> Go To Flag List</span>
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

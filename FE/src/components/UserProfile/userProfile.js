@@ -185,7 +185,11 @@ const UserProfile = () => {
         ? GuestUserDetail
         : null;
 <<<<<<< HEAD
+<<<<<<< HEAD
        
+=======
+        console.log(userData.data?.user , "wefcwe") 
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
         console.log(userData.data?.user , "wefcwe") 
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

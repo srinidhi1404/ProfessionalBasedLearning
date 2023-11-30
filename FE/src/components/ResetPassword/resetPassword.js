@@ -60,7 +60,11 @@ const ResetPassword = ({ email, handleClose1 }) => {
         email: email,
       };
 <<<<<<< HEAD
+<<<<<<< HEAD
       let response = await fetchApi("api/resetpassword", payload, "POST");
+=======
+      let response = await fetchApi("/api/resetpassword", payload, "POST");
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
       let response = await fetchApi("/api/resetpassword", payload, "POST");
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961

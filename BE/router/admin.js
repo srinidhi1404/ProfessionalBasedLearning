@@ -7,7 +7,10 @@ router.post("/signup", admin.signup);
 router.post("/login", admin.login);
 router.get("/all/project", auth, admin.getAllProjects);
 <<<<<<< HEAD
+<<<<<<< HEAD
 router.get("/explore/project", auth, admin.exploreProjects);
+=======
+>>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 =======
 >>>>>>> eedf378f112d238e6d6a29b02d63a4f8af80e961
 router.post("/approve", admin.updateProjectStatus);
