@@ -1,7 +1,7 @@
 export const fetchApi = async (endpoint, body, method) => {
   let auth = localStorage.getItem("token");
 //https://gorgeous-hosiery-yak.cyclic.app/
-  let baseUrl = "https://professional-based-learning.vercel.app/";
+  let baseUrl = "https://professionalbasedlearning.onrender.com/";
   let data = {
     method: method, 
     headers: {
