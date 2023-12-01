@@ -1,0 +1,30 @@
+.contact-wrap{
+    display: flex;
+    margin-top: 10px;
+}
+.footerDiv1{
+    min-height: 20vh;
+    background-color: black;
+}
+.footerDiv1{
+    color: white ;
+    padding: 2px 60px;
+
+}
+.footerDiv2{
+    font-size: 15px;
+    padding: 4px 23px;
+    font-weight: 700;
+    border-right: 2px solid white;
+}
+.footerDiv3{
+    text-align: end;
+
+}
+.f-p-wrap{
+margin-top: 33px;
+margin-bottom: 10px;
+}
+.footerDiv2:first-child{
+    padding-left: 0 !important;
+}

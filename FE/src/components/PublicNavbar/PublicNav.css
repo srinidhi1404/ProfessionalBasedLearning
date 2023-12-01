@@ -1,0 +1,21 @@
+.exploreProjectButton button{
+    padding: 10px 20px 12px 20px;
+    background-color: white !important;
+    color: #006747;
+    font-size: 20px;
+    border-radius: 30px;
+    font-weight: bold;
+  }
+  .LogoutDiv2New{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0px 18px;
+  }
+  .logo-flex{
+    display: flex;
+  }
+  .imageContainerNew{
+    margin-top: 14px;
+  }

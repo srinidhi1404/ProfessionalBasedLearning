@@ -1,0 +1,151 @@
+.profileDiv2 {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.profileDiv3 {
+  justify-content: left;
+  display: flex;
+  align-items: center;
+  width: 90%;
+  margin-top: 2%;
+}
+
+.profileDiv5 {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #006747;
+  border: 3px solid #3498db;
+position: absolute !important;
+bottom: -50px !important;
+
+}
+
+.profileDiv5 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileDiv6 {
+  margin-top: 35px;
+}
+
+.profileDiv8 {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  width: 100%;
+  color: #212529;
+}
+
+.profileDiv8 table {
+  padding: "10px"
+}
+
+.AlignItems {
+  text-align: left;
+}
+
+.AlignUserName {
+  text-align: "center";
+  margin-bottom: "15px";
+}
+
+.userInfo {
+  margin: "0 auto";
+  width: "fit-content";
+}
+
+.imgloading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+}
+
+.userprofileBg {
+  background-image: url(../../asset/image/ProfileBg.jpg);
+  background-size: cover;
+  height: 40vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+
+}
+
+.Profile-card {
+  min-height: 20vh;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .0), 0 5px 6px rgba(0, 0, 0, .23) !important;
+}
+
+.dummyDiv {
+  height: 50px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 14px 0px;
+}
+
+
+.styled-button {
+  background-color: #003B70;
+  color: white;
+  padding: 6px 20px;
+  border: none;
+  border-radius: 30px;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0px 10px;
+}
+
+.styled-button:last-child {
+  background-color: #003B70;
+  color: white;
+  padding: 6px 40px;
+  border: none;
+  border-radius: 30px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.phone-number {
+  margin-left: 10px;
+}
+
+
+.call-icon::before {
+  content: "\260E";
+  margin-right: 5px;
+}
+
+.mail-icon::before {
+  content: "\2709";
+  margin-right: 5px;
+}
+
+.button-containerNew {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 12px;
+
+}
+
+.project-posted-heading {
+  margin: 30px 20px;
+}

@@ -1,0 +1,65 @@
+.navbarCss {
+    box-shadow: 0 2px 4px rgba(0.2, 0, 0, 0.4);
+}
+
+.projectDiv1 {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: right;
+    align-items: center;
+    border: solid;
+
+}
+
+.comment-count-wrap {
+    display: flex;
+}
+
+.circular-image {
+    width: 47px;
+    height: 47px;
+    background-color: #006747;
+    border-radius: 50%;
+    padding: 3px;
+}
+
+.project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.content-card {
+    width: 94%;
+    padding: 15px 15px 0px 15px;
+}
+
+.commentcount img {
+    width: 20px;
+    height: 20px;
+}
+
+.cmt-con {
+    position: absolute;
+    top: 17px;
+    font-size: 10px;
+    left: 7px;
+}
+
+.commentcount {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: -17px;
+}
+
+.imag-card {
+    display: flex;
+    width: 6%;
+    justify-content: center;
+margin-top: 15px;
+}
