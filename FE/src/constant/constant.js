@@ -1,2 +1,1 @@
-export const BASE_URL = " http://localhost:3000/"
-//https://dgp-ebinjoe.onrender.com/
+export const BASE_URL = "https://professionalbasedlearning.onrender.com/"
