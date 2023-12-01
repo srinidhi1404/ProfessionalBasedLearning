@@ -327,7 +327,7 @@ const Dashboard = () => {
     },
     { 
       heading: "Add New User",
-      title: "Add Stidents here",
+      title: "Add Students here",
       title2: (
         <div
         style={{
