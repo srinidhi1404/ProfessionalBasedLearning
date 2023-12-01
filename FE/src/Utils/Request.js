@@ -1,6 +1,8 @@
 export const fetchApi = async (endpoint, body, method) => {
   let auth = localStorage.getItem("token");
   let baseUrl = "https://professionalbasedlearning.onrender.com/";
+  //  let baseUrl = "http://localhost:3000/";
+
   let data = {
     method: method, 
     headers: {
