@@ -14,9 +14,9 @@ Id: admin@gmail.com
 Password: 1234
 
 #### User Login
-Id: Sid - s549406@nwmissouri.edu
+Id: Sid - s550608@nwmissouri.edu
 Password: 123456
 
 #### Guest Login
 Id: Gmail - balmurisrinidhi@gmail.com
-Password - Srinidhi@123
+Password - Srinidhi
