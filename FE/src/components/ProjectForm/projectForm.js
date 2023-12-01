@@ -209,7 +209,7 @@ const ProjectForm = () => {
           response = await fetchApi("api/add/project", payload, "POST");
         } else if (userType === "student") {
           response = await fetchApi(
-            "/student/add/project",
+            "student/add/project",
             payload,
             "POST"
           );
