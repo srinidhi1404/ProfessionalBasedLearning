@@ -324,7 +324,7 @@ const ProjectForm = () => {
                     <div className="custom-placeHolder">mm/dd/yyyy</div>
                   ) : moment(formData.startDate).format("MM/DD/YYYY") ===
                     "Invalid date" ? (
-                    <div className="custom-placeHolder">mm/yy/yyyy</div>
+                    <div className="custom-placeHolder">mm/dd/yyyy</div>
                   ) : (
                     <div className="custom-placeHolder">
                       {moment(formData.startDate).format("MM/DD/YYYY")}
@@ -359,7 +359,7 @@ const ProjectForm = () => {
                     <div className="custom-placeHolder">mm/dd/yyyy</div>
                   ) : moment(formData.endDate).format("MM/DD/YYYY") ===
                     "Invalid date" ? (
-                    <div className="custom-placeHolder">mm/yy/yyyy</div>
+                    <div className="custom-placeHolder">mm/dd/yyyy</div>
                   ) : (
                     <div className="custom-placeHolder">
                       {moment(formData.endDate).format("MM/DD/YYYY")}

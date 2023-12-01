@@ -13,6 +13,10 @@ const Dashboard = () => {
       title: "User Details here",
       title2: (
         <div
+        style={{
+          backgroundColor:"#006747",
+          color: "white"
+        }}
           onClick={() => {
             navigate("/user-profile");
           }}
