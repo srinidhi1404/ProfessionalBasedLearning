@@ -19,6 +19,8 @@ import Request from "./components/Projects/Request";
 import UserDetails from "./components/Projects/UserDetails";
 import ViewAdminProject from "./components/Projects/ViewProject-Admin";
 import PublicProject from "./components/PublicNavbar/PublicProject";
+import AddAdminForm from "./components/AddAdmin/addAdmin";
+import AddStudentForm from "./components/AddStudent/addStudent";
 function App() {
   return (
     <>
@@ -26,6 +28,9 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/sign-up" element={<SignupForm />} />
+        
+        <Route path="/addAdmin" element= {<AddAdminForm/>}/>
+        <Route path="/addStudent" element = {<AddStudentForm/>}/>
         <Route path="/forgot-Password" element={<ForgotPasswordForm />} />
         <Route path="/reset-Password" element={<ResetPassword />} />
         <Route path="/PublicProject" element={<PublicProject />} />
